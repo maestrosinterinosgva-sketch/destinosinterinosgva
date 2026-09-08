@@ -2,9 +2,9 @@ name: Actualización Automática Semanal de Puestos Ofertados
 
 on:
   schedule:
-    # Se ejecuta los lunes, martes, miércoles y jueves entre 12:00 y 19:45 UTC (14:00 - 21:45 hora peninsular)
-    # cada 15 minutos en continuo para capturar el listado en cuanto Conselleria lo cuelga.
-    - cron: '*/15 12-19 * * 1-4'
+    # Se ejecuta de lunes a viernes desde las 06:00 UTC (08:00 hora peninsular española)
+    # hasta las 20:00 UTC (22:00 hora peninsular), cada 15 minutos en continuo.
+    - cron: '*/15 6-20 * * 1-5'
   workflow_dispatch:
     inputs:
       pdf_url:
