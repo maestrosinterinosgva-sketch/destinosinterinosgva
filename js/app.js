@@ -318,6 +318,11 @@
     });
     document.getElementById('btnClearFavorites').addEventListener('click', clearAllFavorites);
     document.getElementById('btnPrintFavorites').addEventListener('click', () => window.print());
+    
+    const btnCopyFav = document.getElementById('btnCopyFavorites');
+    if (btnCopyFav) {
+      btnCopyFav.addEventListener('click', copyFavoritesToClipboard);
+    }
 
     // Modal de Donación / Invítame a un café
     const btnOpenDonate = document.getElementById('btnOpenDonate');
@@ -1003,21 +1008,82 @@
 
     let html = '<div style="display:flex; flex-direction:column; gap:0.75rem;">';
     favPlazas.forEach((p, index) => {
+      const tipoClass = p.tipo === 'VACANTE' ? 'vacante' : 
+                       (p.tipo === 'SUSTITUCIÓN INDETERMINADA' ? 'indeterminada' : 'determinada');
+      const borderClass = p.tipo === 'VACANTE' ? 'vacante-border' : 
+                         (p.tipo === 'SUSTITUCIÓN INDETERMINADA' ? 'indet-border' : 'det-border');
+
       html += `
-        <div style="background:var(--bg-main); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.75rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
-            <span style="font-size:0.75rem; font-weight:700; color:var(--primary);">Petición #${index + 1}</span>
-            <button type="button" style="background:none; border:none; color:#ef4444; font-size:0.9rem; cursor:pointer;" onclick="window.removeFavoriteItem('${p.lloc}')" title="Eliminar">&times;</button>
+        <div class="plaza-card ${borderClass}" style="padding:0.85rem; margin-bottom:0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <span style="font-size:0.75rem; font-weight:800; color:var(--primary); background:var(--primary-light); padding:0.15rem 0.5rem; border-radius:12px;">
+              Petición #${index + 1}
+            </span>
+            <div style="display:flex; gap:0.3rem; align-items:center;">
+              <span class="distance-badge" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                📍 ${p.distancia_km.toFixed(1)} km (~${p.tiempo_min} min)
+              </span>
+              <button type="button" style="background:none; border:none; color:#ef4444; font-size:1.1rem; cursor:pointer; padding:0 0.3rem;" onclick="window.removeFavoriteItem('${p.lloc}')" title="Eliminar de mi orden">&times;</button>
+            </div>
           </div>
-          <div style="font-weight:700; font-size:0.9rem; color:var(--text-main);">${p.nombre_centro}</div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin:0.2rem 0;">📍 ${p.localidad} · <strong>${p.distancia_km.toFixed(1)} km</strong> (~${p.tiempo_min} min)</div>
-          <div style="font-size:0.75rem; color:var(--text-main);"><strong>Lloc:</strong> ${p.lloc} · <strong>Tipo:</strong> ${p.tipo} · ${p.horas}</div>
+
+          <!-- Código de centro asociado al nombre -->
+          <div style="font-weight:800; font-size:0.95rem; color:var(--text-main); margin-bottom:0.25rem; display:flex; align-items:center; gap:0.35rem; flex-wrap:wrap;">
+            <span class="center-code-badge" style="font-size:0.85rem; color:var(--primary); font-weight:800;">${p.codigo_centro}</span>
+            <span>${p.nombre_centro}</span>
+          </div>
+
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.4rem;">
+            🏛️ ${p.localidad} (${p.provincia}) · <strong>${p.especialidad}</strong>
+          </div>
+
+          <div class="badges-row" style="margin-bottom:0;">
+            <span class="tag-tipo ${tipoClass}" style="font-size:0.7rem; padding:0.15rem 0.45rem;">${p.tipo}</span>
+            <span class="tag-hours ${p.es_completa ? '' : 'parcial'}" style="font-size:0.7rem; padding:0.15rem 0.45rem;">
+              ⏱️ ${p.es_completa ? 'Jornada Completa' : p.horas + 'h'}
+            </span>
+            ${p.itinerante === 'SI' ? `<span class="tag-itinerante" style="font-size:0.7rem; padding:0.15rem 0.45rem;">🚗 Itinerante</span>` : ''}
+            <span style="font-size:0.7rem; color:var(--text-muted); margin-left:auto; align-self:center;">
+              Lloc: <strong>${p.lloc}</strong>
+            </span>
+          </div>
         </div>
       `;
     });
     html += '</div>';
 
     container.innerHTML = html;
+  }
+
+  function copyFavoritesToClipboard() {
+    const favPlazas = state.allPlazas.filter(p => state.favorites.has(p.lloc));
+    favPlazas.sort((a, b) => a.distancia_km - b.distancia_km);
+    if (favPlazas.length === 0) {
+      alert("Añade primero algunas plazas a tu lista pulsando la estrella.");
+      return;
+    }
+
+    const lines = [
+      `MI ORDEN DE PETICIÓN - DESTINOS GVA (${state.origin.nombre})`,
+      `Fecha: ${new Date().toLocaleDateString()}`,
+      `------------------------------------------------------------`
+    ];
+
+    favPlazas.forEach((p, idx) => {
+      lines.push(`${idx + 1}. ${p.codigo_centro} ${p.nombre_centro} (${p.localidad}) - ${p.tipo} [${p.horas}] - ${p.distancia_km.toFixed(1)} km (Lloc: ${p.lloc})`);
+    });
+
+    const textToCopy = lines.join('\n');
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      const btn = document.getElementById('btnCopyFavorites');
+      const origText = btn.innerHTML;
+      btn.innerHTML = '<span>✅</span> ¡Copiado!';
+      setTimeout(() => {
+        btn.innerHTML = origText;
+      }, 2000);
+    }).catch(() => {
+      alert("No se pudo copiar automáticamente al portapapeles.");
+    });
   }
 
   // Exponer función de borrado de favorito en el drawer
