@@ -1123,3 +1123,271 @@ body {
 .app-footer a:hover {
   text-decoration: underline;
 }
+
+/* Botón de Café / Donación */
+.btn-coffee {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.825rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.btn-coffee:hover {
+  background: #fde68a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(217, 119, 6, 0.2);
+}
+
+[data-theme="dark"] .btn-coffee {
+  background: #78350f33;
+  color: #fde047;
+  border-color: #92400e;
+}
+
+/* Banner de Promoción Cruzada */
+.cross-promo-card {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+[data-theme="dark"] .cross-promo-card {
+  background: linear-gradient(135deg, #1e293b 0%, #172554 100%);
+  border-color: #1e40af;
+}
+
+.cross-promo-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cross-promo-icon {
+  width: 46px;
+  height: 46px;
+  background: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .cross-promo-icon {
+  background: #0f172a;
+}
+
+.cross-promo-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #2563eb;
+  margin-bottom: 0.2rem;
+}
+
+[data-theme="dark"] .cross-promo-tag {
+  color: #60a5fa;
+}
+
+.cross-promo-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.15rem;
+}
+
+.cross-promo-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.btn-cross-promo {
+  background: #2563eb;
+  color: #ffffff;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-cross-promo:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .cross-promo-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-cross-promo {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Modal de Donación */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.donate-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
+}
+
+.modal-backdrop.active .donate-modal {
+  transform: translateY(0);
+}
+
+.donate-modal-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.donate-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-main);
+}
+
+.donate-modal-body {
+  padding: 1.25rem;
+}
+
+.donate-intro {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.donate-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.donate-option-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: var(--text-main);
+  transition: all 0.15s ease;
+}
+
+.donate-option-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.donate-option-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.donate-option-info {
+  flex: 1;
+}
+
+.donate-option-title {
+  font-size: 0.9rem;
+  font-weight: 750;
+  color: var(--text-main);
+}
+
+.donate-option-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.donate-arrow {
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.donate-option-card.share-card {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+[data-theme="dark"] .donate-option-card.share-card {
+  background: #064e3b26;
+  border-color: #065f46;
+}
+

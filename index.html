@@ -12,6 +12,19 @@
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <!-- Custom Styles -->
+  <!-- Google tag (gtag.js) - Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SM4D94ZE4M"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-SM4D94ZE4M');
+  </script>
+
+  <!-- Google AdSense Oficial -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7842650272336816" crossorigin="anonymous"></script>
+
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -37,6 +50,9 @@
       </div>
 
       <div class="nav-actions">
+        <button class="btn-coffee" id="btnOpenDonate" title="Apoyar este proyecto independiente">
+          <span>☕</span> Invítame a un café
+        </button>
         <button class="btn-icon" id="btnThemeToggle" title="Cambiar tema claro/oscuro">
           <span id="themeIcon">🌙</span>
         </button>
@@ -49,6 +65,21 @@
 
   <!-- Main Container -->
   <main class="main-content">
+
+    <!-- Cross Promotion Card: Enlace a la web hermana de Interinos -->
+    <section class="cross-promo-card">
+      <div class="cross-promo-left">
+        <div class="cross-promo-icon">📊</div>
+        <div class="cross-promo-content">
+          <div class="cross-promo-tag">🔗 HERRAMIENTA HERMANA RECOMENDADA</div>
+          <h3 class="cross-promo-title">¿Quieres saber cómo se ha movido tu posición en la bolsa?</h3>
+          <p class="cross-promo-desc">Consulta los últimos cortes de la bolsa, personas desactivadas y cuántos puestos te faltan para ser nombrado/a con nuestro <strong>Localizador de Interinos GVA</strong>.</p>
+        </div>
+      </div>
+      <a href="https://herrizpab-a11y.github.io/bolsamaestrosinterinosgva/" target="_blank" rel="noopener" class="btn-cross-promo">
+        <span>🎯</span> Abrir Localizador de Bolsa &rarr;
+      </a>
+    </section>
 
     <!-- Hero Card: Origin Municipality & Distance -->
     <section class="hero-location-card">
@@ -254,6 +285,56 @@
         </button>
       </div>
     </aside>
+  <!-- Modal de Donación / Invítame a un café -->
+  <div class="modal-backdrop" id="donateModalBackdrop">
+    <div class="donate-modal">
+      <div class="donate-modal-header">
+        <h3 class="donate-modal-title"><span>☕</span> Invítame a un café</h3>
+        <button class="drawer-close" id="btnCloseDonateModal">&times;</button>
+      </div>
+      <div class="donate-modal-body">
+        <p class="donate-intro">
+          Esta plataforma ha sido desarrollada de forma <strong>100% independiente, gratuita y sin ánimo de lucro</strong> para ahorrar tiempo y disgustos de kilómetros al profesorado interino de la Comunitat Valenciana.
+        </p>
+        <p class="donate-intro" style="margin-top:0.5rem; font-size:0.85rem;">
+          Si esta herramienta te ayuda a elegir mejor tu plaza o te ahorra horas de trabajo cada semana, cualquier contribución simbólica ayuda a mantener los servidores y las actualizaciones automáticas activas.
+        </p>
+
+        <div class="donate-options">
+          <!-- Opción 1: Ko-fi / Tarjeta -->
+          <a href="https://ko-fi.com" target="_blank" rel="noopener" class="donate-option-card">
+            <div class="donate-option-icon">☕</div>
+            <div class="donate-option-info">
+              <div class="donate-option-title">Donar un café (Ko-fi / Tarjeta)</div>
+              <div class="donate-option-desc">Aportación segura de 2€, 3€ o la cantidad que tú elijas.</div>
+            </div>
+            <span class="donate-arrow">&rarr;</span>
+          </a>
+
+          <!-- Opción 2: Bizum -->
+          <div class="donate-option-card" id="bizumCard" style="cursor: default;">
+            <div class="donate-option-icon">📱</div>
+            <div class="donate-option-info">
+              <div class="donate-option-title">Aportación voluntaria por Bizum</div>
+              <div class="donate-option-desc">Concepto: <strong>Café Destinos GVA</strong></div>
+              <div style="margin-top:0.4rem; font-size:0.8rem; color:var(--primary); font-weight:700;">
+                Disponible para soporte del servidor
+              </div>
+            </div>
+          </div>
+
+          <!-- Opción 3: Compartir por WhatsApp -->
+          <a href="https://api.whatsapp.com/send?text=%C2%A1Hola!%20He%20encontrado%20este%20calculador%20de%20proximidad%20para%20las%20plazas%20ofertadas%20de%20maestros%20de%20Conselleria.%20Te%20ordena%20los%20colegios%20por%20km%20y%20minutos%20desde%20tu%20casa:%20https://herrizpab-a11y.github.io/destinosinterinosgva/" target="_blank" rel="noopener" class="donate-option-card share-card">
+            <div class="donate-option-icon">📢</div>
+            <div class="donate-option-info">
+              <div class="donate-option-title">Compártelo en tus grupos de WhatsApp</div>
+              <div class="donate-option-desc">¡La mayor ayuda es que llegue a más compañeros interinos!</div>
+            </div>
+            <span class="donate-arrow">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Footer -->

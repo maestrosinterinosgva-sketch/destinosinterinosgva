@@ -318,6 +318,27 @@
     });
     document.getElementById('btnClearFavorites').addEventListener('click', clearAllFavorites);
     document.getElementById('btnPrintFavorites').addEventListener('click', () => window.print());
+
+    // Modal de Donación / Invítame a un café
+    const btnOpenDonate = document.getElementById('btnOpenDonate');
+    const donateModalBackdrop = document.getElementById('donateModalBackdrop');
+    const btnCloseDonateModal = document.getElementById('btnCloseDonateModal');
+
+    if (btnOpenDonate && donateModalBackdrop) {
+      btnOpenDonate.addEventListener('click', () => {
+        donateModalBackdrop.classList.add('active');
+      });
+      if (btnCloseDonateModal) {
+        btnCloseDonateModal.addEventListener('click', () => {
+          donateModalBackdrop.classList.remove('active');
+        });
+      }
+      donateModalBackdrop.addEventListener('click', (e) => {
+        if (e.target.id === 'donateModalBackdrop') {
+          donateModalBackdrop.classList.remove('active');
+        }
+      });
+    }
   }
 
   // --- Selección de Municipio desde el input ---
