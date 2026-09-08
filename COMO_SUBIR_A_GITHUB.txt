@@ -1,0 +1,29 @@
+========================================================================
+  🚀 CÓMO SUBIR TU WEB A GITHUB Y ACTIVAR LA AUTOMATIZACIÓN GRATIS
+========================================================================
+
+1. CREAR EL REPOSITORIO EN GITHUB:
+   a. Entra en tu cuenta de GitHub (https://github.com) y pulsa en "New repository".
+   b. Ponle de nombre "destinos" (o el que prefieras).
+   c. Déjalo como "Public" y pulsa "Create repository".
+
+2. SUBIR LOS ARCHIVOS CON EL ASISTENTE:
+   a. En esta carpeta, haz doble clic en "SUBIR_A_GITHUB.bat".
+   b. Pega el enlace de tu repositorio de GitHub cuando te lo pida.
+   c. Pulsa ENTER. ¡Se subirán todos los archivos automáticamente!
+
+3. ACTIVAR LA WEB GRATUITA (GITHUB PAGES):
+   a. En tu repositorio de GitHub, entra en "Settings" (pestaña superior).
+   b. En el menú de la izquierda, entra en "Pages".
+   c. En "Build and deployment" > "Source", selecciona "Deploy from a branch".
+   d. En "Branch", elige "main" (o "master") y carpeta "/ (root)".
+   e. Pulsa "Save". En 1 minuto tendrás tu web funcionando en:
+      https://tu-usuario.github.io/destinos/
+
+4. DAR PERMISOS AL BOT PARA QUE GUARDE LAS ACTUALIZACIONES:
+   a. En "Settings" > "Actions" > "General".
+   b. Baja hasta "Workflow permissions".
+   c. Marca la casilla "Read and write permissions" y pulsa "Save".
+   d. ¡Listo! A partir de ese momento, el bot de GitHub se ejecutará solo
+      cada semana y publicará los nuevos puestos sin que hagas nada.
+========================================================================

@@ -1,0 +1,6 @@
+tools/
+__pycache__/
+*.pyc
+puestos_descargados_auto.pdf
+*.tmp
+.DS_Store

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Destinos Docentes CV - Calculador de Proximidad y Plazas Ofertadas</title>
+  <meta name="description" content="Calcula y ordena los centros docentes ofertados por Conselleria de Educación GVA según cercanía a tu localidad, especialidad, horas, tipo de plaza e itinerancia.">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0284c7">
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header / Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">🎯</div>
+        <div>
+          <div class="brand-title">Destinos Docentes CV</div>
+          <div class="brand-subtitle">Calculador de Proximidad · Maestros y Adjudicación Continua GVA</div>
+        </div>
+      </a>
+
+      <div class="nav-badges">
+        <div class="badge-official" title="Datos procesados directamente del PDF de Conselleria">
+          <span>✓</span> Fuentes Oficiales GVA
+        </div>
+        <div class="badge-date" id="navAdjudicacionDate">
+          📅 Adjudicación: 08/09/2026
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-icon" id="btnThemeToggle" title="Cambiar tema claro/oscuro">
+          <span id="themeIcon">🌙</span>
+        </button>
+        <button class="btn-primary" id="btnOpenFavorites" title="Ver mi lista de peticiones guardadas">
+          <span>⭐</span> Mi Selección (<span id="favCountBadge">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- Hero Card: Origin Municipality & Distance -->
+    <section class="hero-location-card">
+      <div class="hero-header">
+        <div class="hero-title-area">
+          <h1><span>📍</span> ¿Dónde vives? Ordenamos las plazas por cercanía a tu casa</h1>
+          <p class="hero-subtitle">Introduce tu municipio o pulsa el botón GPS para calcular la distancia en kilómetros y minutos en carretera a cada colegio ofertado.</p>
+        </div>
+      </div>
+
+      <div class="location-input-row">
+        <!-- Municipality autocomplete input -->
+        <div class="location-picker">
+          <label for="originInput">Tu Municipio / Localidad de Residencia</label>
+          <div class="input-with-icon">
+            <span class="input-icon">🏡</span>
+            <input type="text" id="originInput" list="municipiosList" placeholder="Escribe tu pueblo o ciudad (ej. Valencia, Alzira, Elche, Castellón...)" autocomplete="off">
+            <datalist id="municipiosList"></datalist>
+          </div>
+        </div>
+
+        <!-- GPS Button -->
+        <button class="btn-gps" id="btnUseGps" title="Detectar tu ubicación mediante el GPS del dispositivo">
+          <span>🧭</span> Usar mi GPS
+        </button>
+
+        <!-- Distance Range Slider -->
+        <div class="distance-slider-box">
+          <label for="maxDistance">
+            <span>Radio de distancia máximo:</span>
+            <span class="distance-val" id="distanceValDisplay">Todas las distancias</span>
+          </label>
+          <input type="range" class="range-input" id="maxDistance" min="5" max="150" step="5" value="150">
+        </div>
+      </div>
+
+      <div class="origin-status-bar">
+        <div class="origin-info" id="originStatusText">
+          <span>📍</span> <span>Punto de partida activo:</span> <strong id="currentOriginLabel">Valencia (Capital)</strong>
+        </div>
+        <div class="origin-extra" id="coordsExtraText">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Cálculo automático de ruta y tiempos por carretera</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-card">
+      <div class="filters-grid">
+        
+        <!-- Cuerpo Filter -->
+        <div class="filter-group">
+          <label for="filterCuerpo">Cuerpo Docente</label>
+          <select id="filterCuerpo" class="filter-select">
+            <option value="MAESTROS" selected>Maestros (Educación Infantil y Primaria)</option>
+            <option value="ALL">Todos los Cuerpos (Secundaria, FP, EOI...)</option>
+            <option value="SECUNDARIA">Profesores de Enseñanza Secundaria</option>
+            <option value="FP">Formación Profesional / Sectores Singulares</option>
+            <option value="EOI">Escuelas Oficiales de Idiomas</option>
+          </select>
+        </div>
+
+        <!-- Especialidad Filter -->
+        <div class="filter-group">
+          <label for="filterEspecialidad">Especialidad</label>
+          <select id="filterEspecialidad" class="filter-select">
+            <option value="ALL">-- Todas las especialidades --</option>
+            <!-- Generated dynamically -->
+          </select>
+        </div>
+
+        <!-- Tipo de Plaza Filter -->
+        <div class="filter-group">
+          <label>Tipo de Plaza</label>
+          <div class="pill-options" id="tipoPills">
+            <button type="button" class="pill-btn active vacante" data-val="VACANTE">🟢 Vacante</button>
+            <button type="button" class="pill-btn active indet" data-val="SUSTITUCIÓN INDETERMINADA">🔵 Sust. Indeterminada</button>
+            <button type="button" class="pill-btn active det" data-val="SUSTITUCIÓN DETERMINADA">🟠 Sust. Determinada</button>
+          </div>
+        </div>
+
+        <!-- Itinerancia Filter -->
+        <div class="filter-group">
+          <label for="filterItinerante">Itinerancia / Compartido</label>
+          <select id="filterItinerante" class="filter-select">
+            <option value="ALL">Todas las plazas</option>
+            <option value="NO">Solo plazas de centro único (NO itinerante)</option>
+            <option value="SI">Solo plazas ITINERANTES / COMPARTIDAS</option>
+          </select>
+        </div>
+
+        <!-- Jornada / Horas Filter -->
+        <div class="filter-group">
+          <label for="filterJornada">Horas de Trabajo / Jornada</label>
+          <select id="filterJornada" class="filter-select">
+            <option value="ALL">Cualquier tipo de jornada</option>
+            <option value="COMPLETA">Solo Jornada Completa</option>
+            <option value="PARCIAL">Solo Tiempo Parcial (Horas)</option>
+          </select>
+        </div>
+
+        <!-- Provincia Filter -->
+        <div class="filter-group">
+          <label for="filterProvincia">Provincia del Centro</label>
+          <select id="filterProvincia" class="filter-select">
+            <option value="ALL">Toda la Comunitat Valenciana</option>
+            <option value="Alacant">Alicante / Alacant</option>
+            <option value="Castelló">Castellón / Castelló</option>
+            <option value="València">Valencia / València</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Live Search & Reset Row -->
+      <div class="filters-bottom-row">
+        <div class="input-with-icon" style="flex: 1; max-width: 450px;">
+          <span class="input-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Buscar por colegio, código (ej. 03011550) o localidad..." autocomplete="off">
+        </div>
+
+        <div class="active-filters-chips" id="activeFilterChips"></div>
+
+        <button type="button" class="btn-reset-filters" id="btnResetFilters">
+          Limpiar todos los filtros
+        </button>
+      </div>
+    </section>
+
+    <!-- View Controls & Results Count -->
+    <div class="view-control-bar">
+      <div class="results-counter" id="resultsCountDisplay">
+        Mostrando <span id="countNumber">0</span> plazas ordenadas por cercanía
+      </div>
+
+      <div class="view-controls-right">
+        <!-- Sort Select -->
+        <select id="sortSelect" class="sort-select">
+          <option value="dist_asc" selected>Ordenar: Más cercanas primero 📍</option>
+          <option value="dist_desc">Ordenar: Más lejanas primero</option>
+          <option value="horas_desc">Ordenar: Mayor número de horas</option>
+          <option value="tipo">Ordenar: Por tipo (Vacantes primero)</option>
+          <option value="loc_asc">Ordenar: Localidad (A-Z)</option>
+        </select>
+
+        <!-- View Tabs -->
+        <div class="view-tabs">
+          <button type="button" class="tab-btn active" id="tabList" title="Vista en listado de tarjetas">
+            <span>📋</span> Listado
+          </button>
+          <button type="button" class="tab-btn" id="tabMap" title="Vista en mapa interactivo">
+            <span>🗺️</span> Mapa
+          </button>
+          <button type="button" class="tab-btn" id="tabStats" title="Vista de estadísticas del listado">
+            <span>📊</span> Estadísticas
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View 1: Plazas List Grid -->
+    <div class="plazas-grid" id="plazasListContainer"></div>
+
+    <!-- View 2: Leaflet Interactive Map -->
+    <div class="map-view-container" id="mapViewContainer">
+      <div id="map"></div>
+    </div>
+
+    <!-- View 3: Statistics Dashboard -->
+    <div class="stats-view-container" id="statsViewContainer">
+      <div class="stats-grid" id="statsDashboardGrid"></div>
+      <div id="statsSpecialtyTableContainer" style="margin-top: 1.5rem;"></div>
+    </div>
+
+    <!-- Empty State Message -->
+    <div class="empty-state" id="emptyStateContainer" style="display: none;">
+      <div class="empty-icon">🔎</div>
+      <h3 class="empty-title">No se han encontrado plazas con estos filtros</h3>
+      <p class="empty-subtitle">Prueba a aumentar el radio de distancia máxima, seleccionar más tipos de plaza o cambiar la especialidad.</p>
+    </div>
+
+  </main>
+
+  <!-- Drawer / Modal for Favorite Selections -->
+  <div class="drawer-backdrop" id="favoritesDrawerBackdrop">
+    <aside class="favorites-drawer" id="favoritesDrawer">
+      <div class="drawer-header">
+        <h2 class="drawer-title"><span>⭐</span> Mi Orden de Petición (<span id="drawerFavCount">0</span>)</h2>
+        <button class="drawer-close" id="btnCloseDrawer" title="Cerrar ventana">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+          Guarda y organiza las plazas que te interesan para tener tu lista lista a la hora de rellenar la solicitud telemática de Conselleria.
+        </p>
+        <div id="favoritesListContainer"></div>
+      </div>
+      <div class="drawer-footer">
+        <button class="btn-icon" id="btnClearFavorites" style="flex:1;">
+          🗑️ Vaciar
+        </button>
+        <button class="btn-primary" id="btnPrintFavorites" style="flex:1;">
+          🖨️ Imprimir / Guardar
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p><strong>Destinos Docentes Comunitat Valenciana</strong> · Desarrollado para ayudar al profesorado interino a calcular distancias y ordenar sus solicitudes telemáticas.</p>
+    <p style="margin-top:0.35rem; font-size:0.75rem; color:var(--text-light);">
+      Fuente oficial: Generalitat Valenciana (Conselleria d'Educació, Cultura, Universitats i Ocupació). Este sitio procesa los datos públicos de la convocatoria semanal.
+    </p>
+  </footer>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Application Data Files -->
+  <script src="data/municipios_coords.js?v=260908"></script>
+  <script src="data/stats_summary.js?v=260908"></script>
+  <script src="data/puestos_data.js?v=260908"></script>
+
+  <!-- Application Logic -->
+  <script src="js/app.js?v=260908"></script>
+</body>
+</html>

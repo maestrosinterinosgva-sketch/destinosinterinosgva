@@ -1,0 +1,44 @@
+========================================================================
+  🤖 GUÍA DE AUTOMATIZACIÓN DE PUESTOS OFERTADOS DE CONSELLERIA
+========================================================================
+
+Hemos preparado 3 formas para que la web se actualice con los nuevos
+listados de puestos ofertados de los lunes y miércoles:
+
+------------------------------------------------------------------------
+NIVEL 1: AUTOMATIZACIÓN 100% EN LA NUBE (LA DEFINITIVA - CERO TRABAJO)
+------------------------------------------------------------------------
+¿Quieres que la web se actualice sola en internet sin que tengas 
+que hacer nada ni tener el ordenador encendido?
+
+Ya te hemos dejado configurado el archivo:
+📁 .github/workflows/auto_actualizar_puestos.yml
+
+¿Cómo funciona?
+1. Al subir esta carpeta a un repositorio gratuito de GitHub (ver "COMO_SUBIR_A_GITHUB.txt"):
+2. Los servidores de GitHub se despiertan automáticamente los LUNES, 
+   MARTES, MIÉRCOLES y JUEVES (días habituales de publicación de puestos en la CV).
+3. El bot rastrea la web oficial de Conselleria d'Educació, detecta si 
+   hay un nuevo PDF de puestos ofertados (pue_prov.pdf), lo descarga, 
+   recalcula las distancias y publica la web actualizada automáticamente.
+4. Tú no tienes que tocar ningún archivo ni encender tu ordenador.
+
+
+------------------------------------------------------------------------
+NIVEL 2: EL BOT AUTÓNOMO EN TU ORDENADOR (ACTUALIZAR_AUTOMATICO.bat)
+------------------------------------------------------------------------
+Si prefieres que se ejecute desde tu propio PC:
+- Haz doble clic en "ACTUALIZAR_AUTOMATICO.bat".
+- El bot se conectará a la web de Conselleria, comprobará si hay nuevo PDF,
+  lo descargará y actualizará la base de datos de centros y plazas.
+- También puedes programarlo en el "Programador de Tareas de Windows" si quieres.
+
+
+------------------------------------------------------------------------
+NIVEL 3: PEGAR EL ENLACE DIRECTO O ARRASTRAR PDF (3 SEGUNDOS)
+------------------------------------------------------------------------
+Si tienes el PDF guardado o te pasan el enlace por WhatsApp/Telegram:
+1. Haz doble clic en "ACTUALIZAR_CON_NUEVO_PDF.bat".
+2. Puedes pegar el enlace (URL) o arrastrar el archivo PDF a la ventana y pulsar ENTER.
+3. El programa procesará el PDF oficial en 3 segundos y actualizará la web.
+========================================================================

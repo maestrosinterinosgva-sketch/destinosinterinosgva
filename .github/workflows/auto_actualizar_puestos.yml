@@ -1,0 +1,53 @@
+name: Actualización Automática Semanal de Puestos Ofertados
+
+on:
+  schedule:
+    # Se ejecuta los lunes, martes, miércoles y jueves entre 12:00 y 19:45 UTC (14:00 - 21:45 hora peninsular)
+    # cada 15 minutos en continuo para capturar el listado en cuanto Conselleria lo cuelga.
+    - cron: '*/15 12-19 * * 1-4'
+  workflow_dispatch:
+    inputs:
+      pdf_url:
+        description: 'URL directa del nuevo PDF de puestos ofertados (opcional para forzar uno específico)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install pymupdf
+
+      - name: Ejecutar bot de comprobación y actualización
+        run: |
+          if [ -n "${{ github.event.inputs.pdf_url }}" ]; then
+            python actualizar_puestos.py "${{ github.event.inputs.pdf_url }}"
+          else
+            python bot_auto_actualizador.py --continuous
+          fi
+
+      - name: Guardar y publicar cambios en la web
+        run: |
+          git config --global user.name "Bot Puestos Conselleria"
+          git config --global user.email "bot@destinos.docentes"
+          git add data/ index.html destinos_web.zip
+          if git diff --staged --quiet; then
+            echo "No hay puestos nuevos que guardar."
+          else
+            git commit -m "Actualización automática de puestos ofertados [skip ci]"
+            git push
+          fi
