@@ -25,6 +25,7 @@
       jornada: "ALL",
       horarioCentro: "ALL",
       provincia: "ALL",
+      ingles: "ALL",
       searchQuery: ""
     },
     sortBy: "time_rush_asc",
@@ -339,6 +340,15 @@
       applyFiltersAndRender();
     });
 
+    // Filtro Requisito de Inglés
+    const filterIngles = document.getElementById('filterIngles');
+    if (filterIngles) {
+      filterIngles.addEventListener('change', (e) => {
+        state.filters.ingles = e.target.value;
+        applyFiltersAndRender();
+      });
+    }
+
     // Búsqueda de texto en vivo
     document.getElementById('searchInput').addEventListener('input', (e) => {
       state.filters.searchQuery = e.target.value.trim().toLowerCase();
@@ -501,6 +511,7 @@
     state.filters.jornada = "ALL";
     state.filters.horarioCentro = "ALL";
     state.filters.provincia = "ALL";
+    state.filters.ingles = "ALL";
     state.filters.searchQuery = "";
     state.maxDistance = 150;
     state.sortBy = "time_rush_asc";
@@ -511,6 +522,8 @@
     const selHorario = document.getElementById('filterHorarioCentro');
     if (selHorario) selHorario.value = "ALL";
     document.getElementById('filterProvincia').value = "ALL";
+    const selIngles = document.getElementById('filterIngles');
+    if (selIngles) selIngles.value = "ALL";
     document.getElementById('searchInput').value = "";
     document.getElementById('maxDistance').value = "150";
     document.getElementById('distanceValDisplay').textContent = "Todas las distancias";
@@ -574,6 +587,16 @@
       // Filtro Provincia
       if (state.filters.provincia !== "ALL" && p.provincia !== state.filters.provincia) {
         return false;
+      }
+
+      // Filtro Requisito de Inglés
+      if (state.filters.ingles && state.filters.ingles !== "ALL") {
+        const req = (p.req_ling || "").toUpperCase();
+        const esp = (p.especialidad || "").toUpperCase();
+        const requiresIngles = req.includes("ING") || req.includes("ANGL") || 
+                               esp.includes("INGLÉS") || esp.includes("INGLES") || esp.includes("ANGLÈS");
+        if (state.filters.ingles === "SI" && !requiresIngles) return false;
+        if (state.filters.ingles === "NO" && requiresIngles) return false;
       }
 
       // Filtro Distancia máxima
@@ -682,6 +705,16 @@
       createChip(container, `Provincia: ${state.filters.provincia}`, () => {
         state.filters.provincia = "ALL";
         document.getElementById('filterProvincia').value = "ALL";
+        applyFiltersAndRender();
+      });
+    }
+
+    if (state.filters.ingles && state.filters.ingles !== "ALL") {
+      const label = state.filters.ingles === "SI" ? "🇬🇧 Requiere Inglés" : "🚫 Sin Inglés";
+      createChip(container, label, () => {
+        state.filters.ingles = "ALL";
+        const sel = document.getElementById('filterIngles');
+        if (sel) sel.value = "ALL";
         applyFiltersAndRender();
       });
     }
@@ -803,8 +836,8 @@
               ` : ''}
 
               ${p.req_ling ? `
-                <span class="tag-req">
-                  🗣️ ${p.req_ling}
+                <span class="tag-req ${p.req_ling.includes('ING') ? 'tag-req-ingles' : ''}" title="Requisito lingüístico oficial de Conselleria">
+                  ${p.req_ling.includes('ING') ? '🇬🇧' : (p.req_ling.includes('FRA') ? '🇫🇷' : '🗣️')} Requiere ${p.req_ling.replace(/\.$/, '')}
                 </span>
               ` : ''}
             </div>
@@ -1272,6 +1305,12 @@
 
             ${p.itinerante === 'SI' ? `<span class="tag-itinerante" style="font-size:0.7rem; padding:0.15rem 0.45rem;">🚗 Itinerante</span>` : ''}
             
+            ${p.req_ling ? `
+              <span class="tag-req ${p.req_ling.includes('ING') ? 'tag-req-ingles' : ''}" style="font-size:0.7rem; padding:0.15rem 0.45rem;">
+                ${p.req_ling.includes('ING') ? '🇬🇧' : '🗣️'} ${p.req_ling.replace(/\.$/, '')}
+              </span>
+            ` : ''}
+
             <span style="font-size:0.7rem; color:var(--text-muted); margin-left:auto; align-self:center;">
               Lloc: <strong>${p.lloc}</strong>
             </span>
@@ -1303,7 +1342,8 @@
     favPlazas.forEach((p, idx) => {
       const jornadaTxt = p.jornada_corta ? ` - ${p.jornada_corta}` : '';
       const trafficTxt = p.tiempo_punta ? ` [🚗 ~${p.tiempo_punta} min punta 8:30-9h]` : '';
-      lines.push(`${idx + 1}. ${p.codigo_centro} ${p.nombre_centro} (${p.localidad}) - ${p.tipo} [${p.horas}]${jornadaTxt} - ${p.distancia_km.toFixed(1)} km${trafficTxt} (Lloc: ${p.lloc})`);
+      const reqTxt = p.req_ling ? ` [Req: ${p.req_ling.replace(/\.$/, '')}]` : '';
+      lines.push(`${idx + 1}. ${p.codigo_centro} ${p.nombre_centro} (${p.localidad}) - ${p.tipo} [${p.horas}]${jornadaTxt}${reqTxt} - ${p.distancia_km.toFixed(1)} km${trafficTxt} (Lloc: ${p.lloc})`);
     });
 
     const textToCopy = lines.join('\n');
@@ -1389,7 +1429,10 @@
           </td>
           <td>
             <div style="font-weight:700; font-size:7.8pt; color:#1e293b;">${p.especialidad}</div>
-            <div style="font-size:6.8pt; color:#64748b;">${p.codigo_especialidad ? `Cód. ${p.codigo_especialidad}` : ''}</div>
+            <div style="font-size:6.8pt; color:#64748b;">
+              ${p.codigo_especialidad ? `Cód. ${p.codigo_especialidad}` : ''}
+              ${p.req_ling ? `<strong style="color:${p.req_ling.includes('ING') ? '#1d4ed8' : '#86198f'};"> [${p.req_ling.replace(/\.$/, '')}]</strong>` : ''}
+            </div>
           </td>
           <td>
             <span class="print-tag ${tipoClass}">${tipoLabel}</span>

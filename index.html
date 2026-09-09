@@ -192,6 +192,16 @@
           </select>
         </div>
 
+        <!-- Requisito de Inglés Filter -->
+        <div class="filter-group">
+          <label for="filterIngles">Requisito de Inglés</label>
+          <select id="filterIngles" class="filter-select">
+            <option value="ALL" selected>Todas las plazas (con o sin inglés)</option>
+            <option value="NO">🚫 Solo plazas SIN requisito de inglés</option>
+            <option value="SI">🇬🇧 Solo plazas que REQUIEREN Inglés (B2 / C1)</option>
+          </select>
+        </div>
+
         <!-- Provincia Filter -->
         <div class="filter-group">
           <label for="filterProvincia">Provincia del Centro</label>
@@ -373,6 +383,6 @@
   <script src="data/puestos_data.js?v=260910"></script>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=260910_traffic"></script>
+  <script src="js/app.js?v=260910_ingles"></script>
 </body>
 </html>
