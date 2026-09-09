@@ -350,7 +350,7 @@
       if (e.target.id === 'favoritesDrawerBackdrop') closeFavoritesDrawer();
     });
     document.getElementById('btnClearFavorites').addEventListener('click', clearAllFavorites);
-    document.getElementById('btnPrintFavorites').addEventListener('click', () => window.print());
+    document.getElementById('btnPrintFavorites').addEventListener('click', printFavoritesList);
     
     const btnCopyFav = document.getElementById('btnCopyFavorites');
     if (btnCopyFav) {
@@ -1269,6 +1269,158 @@
       alert("No se pudo copiar automáticamente al portapapeles.");
     });
   }
+
+  // --- Sistema de Impresión A4 Optimizada ---
+  function printFavoritesList() {
+    const plazaMap = new Map(state.allPlazas.map(p => [p.lloc, p]));
+    const favPlazas = state.favoritesOrder.map(lloc => plazaMap.get(lloc)).filter(Boolean);
+
+    if (favPlazas.length === 0) {
+      alert("Añade primero algunas plazas a tu lista pulsando la estrella para poder imprimirlas.");
+      return;
+    }
+
+    generatePrintDocument(favPlazas, false);
+    window.print();
+  }
+
+  function generatePrintDocument(plazas, isGeneric = false) {
+    const container = document.getElementById('printDoc');
+    if (!container) return;
+
+    const fechaStr = new Date().toLocaleDateString('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const origenTxt = state.origin ? `${state.origin.nombre} (${state.origin.provincia})` : 'Comunitat Valenciana';
+    const fechaAdj = (window.STATS_SUMMARY && window.STATS_SUMMARY.fecha_adjudicacion) ? window.STATS_SUMMARY.fecha_adjudicacion : 'Convocatoria semanal Conselleria';
+
+    let rowsHtml = '';
+    plazas.forEach((p, idx) => {
+      const tipoClass = p.tipo === 'VACANTE' ? 'print-tag-vacante' : 
+                       (p.tipo === 'SUSTITUCIÓN INDETERMINADA' ? 'print-tag-indet' : 'print-tag-det');
+      const tipoLabel = p.tipo === 'VACANTE' ? 'VACANTE' : 
+                       (p.tipo === 'SUSTITUCIÓN INDETERMINADA' ? 'SUST. INDET.' : 'SUST. DET.');
+
+      let jornadaTag = '';
+      if (p.jornada === 'CONTINUA') {
+        jornadaTag = '<span class="print-tag print-tag-continua">🌞 Continua 9h-14h</span>';
+      } else if (p.jornada === 'PARTIDA') {
+        jornadaTag = '<span class="print-tag print-tag-partida">⏱️ Partida 9h-17h</span>';
+      } else if (p.jornada === 'SECUNDARIA') {
+        jornadaTag = '<span class="print-tag print-tag-ies">🏫 Horario IES</span>';
+      } else {
+        jornadaTag = '<span style="color:#94a3b8; font-size:7pt;">-</span>';
+      }
+
+      const horasTxt = p.es_completa ? 'J. Completa' : `${p.horas}h`;
+      const itinTxt = p.itinerante === 'SI' ? ' · 🚗 Itin.' : '';
+      const distTxt = typeof p.distancia_km === 'number' ? `${p.distancia_km.toFixed(1)} km` : '-';
+      const timeTxt = p.tiempo_min ? `~${p.tiempo_min} min` : '';
+
+      rowsHtml += `
+        <tr>
+          <td class="print-order-num">#${idx + 1}</td>
+          <td>
+            <div class="print-code">${p.codigo_centro}</div>
+            <div style="font-size:6.8pt; color:#64748b;">Lloc: ${p.lloc || 'S/N'}</div>
+          </td>
+          <td>
+            <div class="print-center-name">${p.nombre_centro}</div>
+            <div class="print-center-sub">📍 ${p.localidad} (${p.provincia})</div>
+          </td>
+          <td>
+            <div style="font-weight:700; font-size:7.8pt; color:#1e293b;">${p.especialidad}</div>
+            <div style="font-size:6.8pt; color:#64748b;">${p.codigo_especialidad ? `Cód. ${p.codigo_especialidad}` : ''}</div>
+          </td>
+          <td>
+            <span class="print-tag ${tipoClass}">${tipoLabel}</span>
+            <div style="font-size:7pt; color:#334155; margin-top:2px;">⏱️ ${horasTxt}${itinTxt}</div>
+          </td>
+          <td>${jornadaTag}</td>
+          <td style="text-align:right;">
+            <div style="font-weight:800; font-size:8pt; color:#0369a1;">${distTxt}</div>
+            <div style="font-size:7pt; color:#64748b;">${timeTxt}</div>
+          </td>
+          <td style="text-align:center;">
+            <div class="print-check-box" title="Marcar al registrar en OVIDOC"></div>
+          </td>
+        </tr>
+      `;
+    });
+
+    container.innerHTML = `
+      <div class="print-header">
+        <div class="print-header-top">
+          <div>
+            <h1 class="print-title">📋 MI ORDEN DE PETICIÓN TELEMÁTICA</h1>
+            <div class="print-subtitle">Destinos Docentes Comunitat Valenciana · Adjudicaciones de Sustituciones y Vacantes</div>
+          </div>
+          <div class="print-badge-total">
+            ${isGeneric ? `${plazas.length} Plazas` : `${plazas.length} Centros Seleccionados`}
+          </div>
+        </div>
+        <div class="print-meta-grid">
+          <div class="print-meta-item"><strong>📍 Origen de Distancias:</strong> ${origenTxt}</div>
+          <div class="print-meta-item"><strong>📅 Fecha:</strong> ${fechaStr}</div>
+          <div class="print-meta-item"><strong>📌 Convocatoria:</strong> ${fechaAdj}</div>
+        </div>
+      </div>
+
+      <table class="print-table">
+        <thead>
+          <tr>
+            <th style="width: 4%; text-align:center;">Pref</th>
+            <th style="width: 12%;">Código / Lloc</th>
+            <th style="width: 28%;">Centro y Municipio</th>
+            <th style="width: 18%;">Especialidad</th>
+            <th style="width: 14%;">Tipo / Horas</th>
+            <th style="width: 12%;">Jornada</th>
+            <th style="width: 8%; text-align:right;">Distancia</th>
+            <th style="width: 4%; text-align:center;" title="Marcar al tramitar en OVIDOC">OVIDOC</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+
+      <div class="print-notes-section">
+        <div class="print-notes-title">✏️ Anotaciones personales / Comprobación telemática OVIDOC:</div>
+        <div class="print-line"></div>
+        <div class="print-line"></div>
+      </div>
+
+      <div class="print-footer">
+        <div>Generado con <strong>Destinos Interinos GVA</strong> (https://herrizpab-a11y.github.io/destinosinterinosgva/)</div>
+        <div>Datos oficiales: Generalitat Valenciana (Conselleria d'Educació, Cultura, Universitats i Ocupació)</div>
+      </div>
+    `;
+  }
+
+  // Interceptar también Ctrl+P en el navegador para evitar imprimir la web completa
+  window.addEventListener('beforeprint', () => {
+    const printDoc = document.getElementById('printDoc');
+    if (!printDoc) return;
+    const plazaMap = new Map(state.allPlazas.map(p => [p.lloc, p]));
+    const favPlazas = state.favoritesOrder.map(lloc => plazaMap.get(lloc)).filter(Boolean);
+
+    if (favPlazas.length > 0) {
+      generatePrintDocument(favPlazas, false);
+    } else if (state.filteredPlazas && state.filteredPlazas.length > 0) {
+      generatePrintDocument(state.filteredPlazas.slice(0, 25), true);
+    } else {
+      printDoc.innerHTML = `
+        <div style="padding: 2rem; text-align: center;">
+          <h2>Destinos Docentes Comunitat Valenciana</h2>
+          <p>No hay plazas seleccionadas para imprimir. Añade centros a tu selección con la estrella o aplica filtros.</p>
+        </div>
+      `;
+    }
+  });
 
   // Exponer función de borrado de favorito en el drawer
   window.removeFavoriteItem = function (lloc) {

@@ -1501,3 +1501,268 @@ body {
   border-color: #065f46;
 }
 
+/* ==========================================================================
+   PRINT STYLES - Hoja de Impresión A4 Optimizada para Mi Selección
+   ========================================================================== */
+#printDoc {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
+  }
+
+  /* Reset global y forzado de fondo blanco y texto oscuro */
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    font-size: 8.5pt !important;
+    line-height: 1.3 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Ocultar ABSOLUTAMENTE toda la interfaz web interactiva */
+  .navbar,
+  .banner-cross,
+  main,
+  footer,
+  aside,
+  .modal-backdrop,
+  .drawer-backdrop,
+  #favoritesDrawerBackdrop,
+  #donateModalBackdrop,
+  .toast,
+  button,
+  .ad-banner-container {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Mostrar exclusivamente el documento maquetado para papel */
+  #printDoc {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #printDoc * {
+    visibility: visible !important;
+  }
+
+  .print-header {
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .print-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+
+  .print-title {
+    font-size: 13pt !important;
+    font-weight: 800 !important;
+    color: #0369a1 !important;
+    margin: 0 0 3px 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  .print-subtitle {
+    font-size: 8pt !important;
+    color: #475569 !important;
+  }
+
+  .print-badge-total {
+    background: #e0f2fe !important;
+    border: 1.5px solid #7dd3fc !important;
+    color: #0369a1 !important;
+    font-weight: 800 !important;
+    font-size: 9pt !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+  }
+
+  .print-meta-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 8pt;
+  }
+
+  .print-meta-item strong {
+    color: #0f172a;
+  }
+
+  /* Tabla de Peticiones */
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 10px !important;
+    font-size: 8pt !important;
+  }
+
+  .print-table thead {
+    display: table-header-group;
+  }
+
+  .print-table th {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 7pt !important;
+    letter-spacing: 0.04em;
+    padding: 6px 5px !important;
+    border: 1px solid #0284c7 !important;
+    text-align: left;
+  }
+
+  .print-table td {
+    padding: 6px 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    vertical-align: middle !important;
+  }
+
+  .print-table tr:nth-child(even) {
+    background: #f8fafc !important;
+  }
+
+  .print-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-order-num {
+    font-weight: 800 !important;
+    font-size: 10pt !important;
+    text-align: center;
+    color: #0284c7 !important;
+  }
+
+  .print-code {
+    font-family: 'Consolas', 'Courier New', monospace !important;
+    font-weight: 800 !important;
+    font-size: 8.5pt !important;
+    color: #1e293b !important;
+    white-space: nowrap;
+  }
+
+  .print-center-name {
+    font-weight: 750 !important;
+    font-size: 8.5pt !important;
+    color: #0f172a !important;
+    line-height: 1.2;
+  }
+
+  .print-center-sub {
+    font-size: 7.2pt !important;
+    color: #475569 !important;
+    margin-top: 1px;
+  }
+
+  .print-tag {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 6.5pt;
+    font-weight: 700;
+  }
+
+  .print-tag-vacante {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    color: #065f46 !important;
+  }
+
+  .print-tag-indet {
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    color: #1e40af !important;
+  }
+
+  .print-tag-det {
+    background: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+    color: #92400e !important;
+  }
+
+  .print-tag-continua {
+    background: #fef3c7 !important;
+    border: 1px solid #fde68a !important;
+    color: #92400e !important;
+  }
+
+  .print-tag-partida {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+  }
+
+  .print-tag-ies {
+    background: #ede9fe !important;
+    border: 1px solid #ddd6fe !important;
+    color: #5b21b6 !important;
+  }
+
+  .print-check-box {
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid #475569 !important;
+    border-radius: 3px;
+    margin: 0 auto;
+    background: #ffffff !important;
+  }
+
+  .print-notes-section {
+    margin-top: 14px;
+    border: 1px dashed #94a3b8;
+    border-radius: 6px;
+    padding: 8px 10px;
+    background: #fafafa !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-notes-title {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: #475569;
+    margin-bottom: 6px;
+  }
+
+  .print-line {
+    border-bottom: 1px dotted #cbd5e1;
+    height: 18px;
+  }
+
+  .print-footer {
+    margin-top: 14px;
+    padding-top: 6px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 6.8pt;
+    color: #64748b;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+
