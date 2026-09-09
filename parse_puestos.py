@@ -13,9 +13,11 @@ import pymupdf
 def load_geo_database(base_dir="."):
     centros_path = os.path.join(base_dir, "data", "centros_geo.json")
     municipios_path = os.path.join(base_dir, "data", "municipios_coords.json")
+    jornadas_path = os.path.join(base_dir, "data", "centros_jornadas.json")
     
     centros_geo = {}
     municipios_geo = {}
+    centros_jornadas = {}
     
     if os.path.exists(centros_path):
         try:
@@ -33,13 +35,20 @@ def load_geo_database(base_dir="."):
         except Exception as e:
             print(f"[!] Aviso al cargar municipios_coords: {e}")
 
-    return centros_geo, municipios_geo
+    if os.path.exists(jornadas_path):
+        try:
+            with open(jornadas_path, "r", encoding="utf-8") as f:
+                centros_jornadas = json.load(f)
+        except Exception as e:
+            print(f"[!] Aviso al cargar centros_jornadas: {e}")
+
+    return centros_geo, municipios_geo, centros_jornadas
 
 def parse_puestos_pdf(pdf_path, base_dir="."):
     if not os.path.exists(pdf_path):
         raise FileNotFoundError(f"No existe el archivo {pdf_path}")
 
-    centros_geo, municipios_geo = load_geo_database(base_dir)
+    centros_geo, municipios_geo, centros_jornadas = load_geo_database(base_dir)
 
     doc = pymupdf.open(pdf_path)
     total_pages = len(doc)
@@ -266,6 +275,11 @@ def parse_puestos_pdf(pdf_path, base_dir="."):
                 es_completa = True if not horas else False
                 horas_num = float(horas) if horas else 25.0
 
+                j_info = centros_jornadas.get(cod_centro, {})
+                j_tipo = j_info.get("tipo", "PARTIDA")
+                j_desc = j_info.get("descripcion", "Jornada Partida (9:00 a 17:00)")
+                j_corta = j_info.get("corta", "Partida 9h-17h")
+
                 plazas.append({
                     "numero": num_orden,
                     "cuerpo": current_cuerpo,
@@ -276,6 +290,9 @@ def parse_puestos_pdf(pdf_path, base_dir="."):
                     "localidad": localidad,
                     "codigo_centro": cod_centro,
                     "nombre_centro": nom_centro,
+                    "jornada": j_tipo,
+                    "jornada_desc": j_desc,
+                    "jornada_corta": j_corta,
                     "direccion": direccion,
                     "cp": cp,
                     "comarca": comarca,

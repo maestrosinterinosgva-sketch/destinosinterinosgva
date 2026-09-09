@@ -23,12 +23,14 @@
       tipos: new Set(["VACANTE", "SUSTITUCIÓN INDETERMINADA", "SUSTITUCIÓN DETERMINADA"]),
       itinerante: "ALL",
       jornada: "ALL",
+      horarioCentro: "ALL",
       provincia: "ALL",
       searchQuery: ""
     },
     sortBy: "dist_asc",
     currentView: "list", // 'list', 'map', 'stats'
     favorites: new Set(),
+    favoritesOrder: [],
     map: null,
     markersGroup: null,
     originMarker: null,
@@ -61,15 +63,21 @@
 
   // --- Carga de Estado Guardado ---
   function loadSavedState() {
-    // Cargar favoritos
+    // Cargar favoritos ordenados por preferencia personal
     try {
-      const savedFavs = localStorage.getItem('destinos_favorites');
-      if (savedFavs) {
-        state.favorites = new Set(JSON.parse(savedFavs));
-        updateFavCountBadges();
+      const savedOrder = localStorage.getItem('destinos_favorites_order');
+      if (savedOrder) {
+        state.favoritesOrder = JSON.parse(savedOrder);
+      } else {
+        const savedFavs = localStorage.getItem('destinos_favorites');
+        state.favoritesOrder = savedFavs ? JSON.parse(savedFavs) : [];
       }
+      state.favorites = new Set(state.favoritesOrder);
+      updateFavCountBadges();
     } catch (e) {
       console.warn("Error al leer favoritos de localStorage:", e);
+      state.favoritesOrder = [];
+      state.favorites = new Set();
     }
 
     // Cargar origen guardado
@@ -94,6 +102,22 @@
 
     if (Array.isArray(window.PUESTOS_DATA)) {
       state.allPlazas = window.PUESTOS_DATA;
+      if (window.CENTROS_JORNADAS) {
+        state.allPlazas.forEach(p => {
+          if (!p.jornada) {
+            const jInfo = window.CENTROS_JORNADAS[p.codigo_centro];
+            if (jInfo) {
+              p.jornada = jInfo.tipo;
+              p.jornada_desc = jInfo.descripcion;
+              p.jornada_corta = jInfo.corta;
+            } else {
+              p.jornada = 'PARTIDA';
+              p.jornada_desc = 'Jornada Partida (9:00 a 17:00)';
+              p.jornada_corta = 'Partida 9h-17h';
+            }
+          }
+        });
+      }
     } else {
       console.error("No se encontró window.PUESTOS_DATA");
     }
@@ -284,6 +308,15 @@
       applyFiltersAndRender();
     });
 
+    // Filtro Jornada del Centro (Conselleria)
+    const filterHorario = document.getElementById('filterHorarioCentro');
+    if (filterHorario) {
+      filterHorario.addEventListener('change', (e) => {
+        state.filters.horarioCentro = e.target.value;
+        applyFiltersAndRender();
+      });
+    }
+
     // Filtro Provincia
     document.getElementById('filterProvincia').addEventListener('change', (e) => {
       state.filters.provincia = e.target.value;
@@ -322,6 +355,11 @@
     const btnCopyFav = document.getElementById('btnCopyFavorites');
     if (btnCopyFav) {
       btnCopyFav.addEventListener('click', copyFavoritesToClipboard);
+    }
+
+    const btnSortFav = document.getElementById('btnSortFavByDistance');
+    if (btnSortFav) {
+      btnSortFav.addEventListener('click', sortFavoritesByDistance);
     }
 
     // Modal de Donación / Invítame a un café
@@ -445,6 +483,7 @@
     state.filters.tipos = new Set(["VACANTE", "SUSTITUCIÓN INDETERMINADA", "SUSTITUCIÓN DETERMINADA"]);
     state.filters.itinerante = "ALL";
     state.filters.jornada = "ALL";
+    state.filters.horarioCentro = "ALL";
     state.filters.provincia = "ALL";
     state.filters.searchQuery = "";
     state.maxDistance = 150;
@@ -453,6 +492,8 @@
     document.getElementById('filterCuerpo').value = "MAESTROS";
     document.getElementById('filterItinerante').value = "ALL";
     document.getElementById('filterJornada').value = "ALL";
+    const selHorario = document.getElementById('filterHorarioCentro');
+    if (selHorario) selHorario.value = "ALL";
     document.getElementById('filterProvincia').value = "ALL";
     document.getElementById('searchInput').value = "";
     document.getElementById('maxDistance').value = "150";
@@ -507,6 +548,11 @@
       // Filtro Jornada / Horas
       if (state.filters.jornada === "COMPLETA" && !p.es_completa) return false;
       if (state.filters.jornada === "PARCIAL" && p.es_completa) return false;
+
+      // Filtro Horario del Centro (Conselleria)
+      if (state.filters.horarioCentro && state.filters.horarioCentro !== "ALL") {
+        if (p.jornada !== state.filters.horarioCentro) return false;
+      }
 
       // Filtro Provincia
       if (state.filters.provincia !== "ALL" && p.provincia !== state.filters.provincia) {
@@ -595,9 +641,20 @@
     }
 
     if (state.filters.jornada !== "ALL") {
-      createChip(container, `Jornada: ${state.filters.jornada}`, () => {
+      createChip(container, `Horas: ${state.filters.jornada}`, () => {
         state.filters.jornada = "ALL";
         document.getElementById('filterJornada').value = "ALL";
+        applyFiltersAndRender();
+      });
+    }
+
+    if (state.filters.horarioCentro && state.filters.horarioCentro !== "ALL") {
+      const label = state.filters.horarioCentro === "CONTINUA" ? "🌞 Continua (9-14h)" : 
+                   (state.filters.horarioCentro === "PARTIDA" ? "⏱️ Partida (9-17h)" : "🏫 Horario IES");
+      createChip(container, label, () => {
+        state.filters.horarioCentro = "ALL";
+        const sel = document.getElementById('filterHorarioCentro');
+        if (sel) sel.value = "ALL";
         applyFiltersAndRender();
       });
     }
@@ -693,6 +750,20 @@
               <span class="tag-hours ${p.es_completa ? '' : 'parcial'}">
                 ⏱️ ${p.es_completa ? 'Jornada Completa' : p.horas + ' horas (Parcial)'}
               </span>
+
+              ${p.jornada === 'CONTINUA' ? `
+                <span class="tag-jornada continua" title="Jornada Continua autorizada por Conselleria (9:00 a 14:00)">
+                  🌞 Continua (9h-14h)
+                </span>
+              ` : (p.jornada === 'PARTIDA' ? `
+                <span class="tag-jornada partida" title="Jornada Partida ordinaria (9:00 a 17:00)">
+                  ⏱️ Partida (9h-17h)
+                </span>
+              ` : (p.jornada === 'SECUNDARIA' ? `
+                <span class="tag-jornada ies" title="Horario de Instituto (Secundaria / FP)">
+                  🏫 Horario IES
+                </span>
+              ` : ''))}
 
               ${isItin ? `
                 <span class="tag-itinerante">
@@ -858,10 +929,10 @@
 
       const popupHtml = `
         <div style="font-family:sans-serif; max-width:260px;">
-          <div style="font-size:0.75rem; color:#64748b; font-weight:700;">#${p.numero} · Lloc: ${p.lloc}</div>
           <h4 style="font-size:0.95rem; margin:0.2rem 0; color:#0f172a;">${p.nombre_centro}</h4>
           <div style="font-size:0.8rem; color:#475569; margin-bottom:0.4rem;">📍 ${p.localidad} (${p.distancia_km.toFixed(1)} km)</div>
-          <div style="font-size:0.75rem; font-weight:700; color:${color}; margin-bottom:0.4rem;">${p.tipo} · ${p.horas}</div>
+          <div style="font-size:0.75rem; font-weight:700; color:${color}; margin-bottom:0.2rem;">${p.tipo} · ${p.horas}</div>
+          ${p.jornada === 'CONTINUA' ? '<div style="font-size:0.75rem; color:#b45309; font-weight:700; margin-bottom:0.3rem;">🌞 Jornada Continua (9:00 a 14:00)</div>' : (p.jornada === 'PARTIDA' ? '<div style="font-size:0.75rem; color:#475569; font-weight:600; margin-bottom:0.3rem;">⏱️ Jornada Partida (9:00 a 17:00)</div>' : '')}
           <div style="font-size:0.75rem; color:#334155;"><strong>${p.especialidad}</strong></div>
           <div style="margin-top:0.6rem;">
             <a href="https://www.google.com/maps/dir/?api=1&origin=${state.origin.lat},${state.origin.lng}&destination=${p.lat},${p.lng}" target="_blank" style="color:#0284c7; font-size:0.8rem; font-weight:600; text-decoration:none;">🗺️ Cómo llegar &rarr;</a>
@@ -944,20 +1015,29 @@
   function toggleFavorite(lloc, btnElem) {
     if (state.favorites.has(lloc)) {
       state.favorites.delete(lloc);
+      state.favoritesOrder = state.favoritesOrder.filter(id => id !== lloc);
       if (btnElem) {
         btnElem.classList.remove('active');
         btnElem.textContent = '☆';
       }
     } else {
       state.favorites.add(lloc);
+      if (!state.favoritesOrder.includes(lloc)) {
+        state.favoritesOrder.push(lloc);
+      }
       if (btnElem) {
         btnElem.classList.add('active');
         btnElem.textContent = '★';
       }
     }
-    localStorage.setItem('destinos_favorites', JSON.stringify(Array.from(state.favorites)));
+    saveFavoritesState();
     updateFavCountBadges();
     renderFavoritesList();
+  }
+
+  function saveFavoritesState() {
+    localStorage.setItem('destinos_favorites', JSON.stringify(Array.from(state.favorites)));
+    localStorage.setItem('destinos_favorites_order', JSON.stringify(state.favoritesOrder));
   }
 
   function updateFavCountBadges() {
@@ -981,18 +1061,85 @@
     if (state.favorites.size === 0) return;
     if (confirm("¿Seguro que deseas vaciar tu selección de plazas guardadas?")) {
       state.favorites.clear();
+      state.favoritesOrder = [];
       localStorage.removeItem('destinos_favorites');
+      localStorage.removeItem('destinos_favorites_order');
       updateFavCountBadges();
       renderFavoritesList();
       applyFiltersAndRender();
     }
   }
 
+  function sortFavoritesByDistance() {
+    if (state.favoritesOrder.length <= 1) return;
+    const plazaMap = new Map(state.allPlazas.map(p => [p.lloc, p]));
+    state.favoritesOrder.sort((a, b) => {
+      const pa = plazaMap.get(a);
+      const pb = plazaMap.get(b);
+      return (pa ? pa.distancia_km : 9999) - (pb ? pb.distancia_km : 9999);
+    });
+    saveFavoritesState();
+    renderFavoritesList();
+  }
+
+  // Mover preferencia arriba (-1) o abajo (+1)
+  window.moveFavoriteItem = function (lloc, direction) {
+    const idx = state.favoritesOrder.indexOf(lloc);
+    if (idx === -1) return;
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= state.favoritesOrder.length) return;
+
+    const temp = state.favoritesOrder[idx];
+    state.favoritesOrder[idx] = state.favoritesOrder[targetIdx];
+    state.favoritesOrder[targetIdx] = temp;
+
+    saveFavoritesState();
+    renderFavoritesList();
+  };
+
+  // Drag and Drop handlers
+  let draggedItemIndex = null;
+
+  window.handleFavDragStart = function (e, index) {
+    draggedItemIndex = index;
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.classList.add('dragging');
+  };
+
+  window.handleFavDragOver = function (e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    e.currentTarget.classList.add('drag-over');
+  };
+
+  window.handleFavDragLeave = function (e) {
+    e.currentTarget.classList.remove('drag-over');
+  };
+
+  window.handleFavDrop = function (e, targetIndex) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    if (draggedItemIndex === null || draggedItemIndex === targetIndex) return;
+
+    const item = state.favoritesOrder.splice(draggedItemIndex, 1)[0];
+    state.favoritesOrder.splice(targetIndex, 0, item);
+    draggedItemIndex = null;
+
+    saveFavoritesState();
+    renderFavoritesList();
+  };
+
+  window.handleFavDragEnd = function (e) {
+    e.currentTarget.classList.remove('dragging');
+    draggedItemIndex = null;
+    document.querySelectorAll('.fav-card-draggable').forEach(el => el.classList.remove('drag-over'));
+  };
+
   function renderFavoritesList() {
     const container = document.getElementById('favoritesListContainer');
     if (!container) return;
 
-    if (state.favorites.size === 0) {
+    if (state.favorites.size === 0 || state.favoritesOrder.length === 0) {
       container.innerHTML = `
         <div style="text-align:center; padding:2rem 1rem; color:var(--text-muted);">
           <div style="font-size:2rem; margin-bottom:0.5rem;">⭐</div>
@@ -1003,8 +1150,8 @@
       return;
     }
 
-    const favPlazas = state.allPlazas.filter(p => state.favorites.has(p.lloc));
-    favPlazas.sort((a, b) => a.distancia_km - b.distancia_km);
+    const plazaMap = new Map(state.allPlazas.map(p => [p.lloc, p]));
+    const favPlazas = state.favoritesOrder.map(lloc => plazaMap.get(lloc)).filter(Boolean);
 
     let html = '<div style="display:flex; flex-direction:column; gap:0.75rem;">';
     favPlazas.forEach((p, index) => {
@@ -1014,11 +1161,28 @@
                          (p.tipo === 'SUSTITUCIÓN INDETERMINADA' ? 'indet-border' : 'det-border');
 
       html += `
-        <div class="plaza-card ${borderClass}" style="padding:0.85rem; margin-bottom:0;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-            <span style="font-size:0.75rem; font-weight:800; color:var(--primary); background:var(--primary-light); padding:0.15rem 0.5rem; border-radius:12px;">
-              Petición #${index + 1}
-            </span>
+        <div class="plaza-card fav-card-draggable ${borderClass}" 
+             style="padding:0.85rem; margin-bottom:0;" 
+             draggable="true" 
+             ondragstart="window.handleFavDragStart(event, ${index})" 
+             ondragover="window.handleFavDragOver(event)" 
+             ondragleave="window.handleFavDragLeave(event)" 
+             ondrop="window.handleFavDrop(event, ${index})" 
+             ondragend="window.handleFavDragEnd(event)" 
+             data-lloc="${p.lloc}">
+          
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem;">
+            <!-- Indicador de orden y botones de subir/bajar -->
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <span class="fav-priority-badge" title="Orden de preferencia #${index + 1}">
+                #${index + 1}
+              </span>
+              <div class="fav-order-controls">
+                <button type="button" class="btn-move-fav" onclick="window.moveFavoriteItem('${p.lloc}', -1)" title="Subir preferencia (más prioridad)" ${index === 0 ? 'disabled' : ''}>⬆️</button>
+                <button type="button" class="btn-move-fav" onclick="window.moveFavoriteItem('${p.lloc}', 1)" title="Bajar preferencia (menos prioridad)" ${index === favPlazas.length - 1 ? 'disabled' : ''}>⬇️</button>
+              </div>
+            </div>
+
             <div style="display:flex; gap:0.3rem; align-items:center;">
               <span class="distance-badge" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
                 📍 ${p.distancia_km.toFixed(1)} km (~${p.tiempo_min} min)
@@ -1039,10 +1203,27 @@
 
           <div class="badges-row" style="margin-bottom:0;">
             <span class="tag-tipo ${tipoClass}" style="font-size:0.7rem; padding:0.15rem 0.45rem;">${p.tipo}</span>
+            
             <span class="tag-hours ${p.es_completa ? '' : 'parcial'}" style="font-size:0.7rem; padding:0.15rem 0.45rem;">
               ⏱️ ${p.es_completa ? 'Jornada Completa' : p.horas + 'h'}
             </span>
+
+            ${p.jornada === 'CONTINUA' ? `
+              <span class="tag-jornada continua" style="font-size:0.7rem; padding:0.15rem 0.45rem;" title="Jornada Continua (9:00 a 14:00)">
+                🌞 Continua 9h-14h
+              </span>
+            ` : (p.jornada === 'PARTIDA' ? `
+              <span class="tag-jornada partida" style="font-size:0.7rem; padding:0.15rem 0.45rem;" title="Jornada Partida (9:00 a 17:00)">
+                ⏱️ Partida 9h-17h
+              </span>
+            ` : (p.jornada === 'SECUNDARIA' ? `
+              <span class="tag-jornada ies" style="font-size:0.7rem; padding:0.15rem 0.45rem;" title="Horario IES / Secundaria">
+                🏫 Horario IES
+              </span>
+            ` : ''))}
+
             ${p.itinerante === 'SI' ? `<span class="tag-itinerante" style="font-size:0.7rem; padding:0.15rem 0.45rem;">🚗 Itinerante</span>` : ''}
+            
             <span style="font-size:0.7rem; color:var(--text-muted); margin-left:auto; align-self:center;">
               Lloc: <strong>${p.lloc}</strong>
             </span>
@@ -1056,8 +1237,9 @@
   }
 
   function copyFavoritesToClipboard() {
-    const favPlazas = state.allPlazas.filter(p => state.favorites.has(p.lloc));
-    favPlazas.sort((a, b) => a.distancia_km - b.distancia_km);
+    const plazaMap = new Map(state.allPlazas.map(p => [p.lloc, p]));
+    const favPlazas = state.favoritesOrder.map(lloc => plazaMap.get(lloc)).filter(Boolean);
+
     if (favPlazas.length === 0) {
       alert("Añade primero algunas plazas a tu lista pulsando la estrella.");
       return;
@@ -1066,11 +1248,13 @@
     const lines = [
       `MI ORDEN DE PETICIÓN - DESTINOS GVA (${state.origin.nombre})`,
       `Fecha: ${new Date().toLocaleDateString()}`,
+      `Total centros seleccionados: ${favPlazas.length}`,
       `------------------------------------------------------------`
     ];
 
     favPlazas.forEach((p, idx) => {
-      lines.push(`${idx + 1}. ${p.codigo_centro} ${p.nombre_centro} (${p.localidad}) - ${p.tipo} [${p.horas}] - ${p.distancia_km.toFixed(1)} km (Lloc: ${p.lloc})`);
+      const jornadaTxt = p.jornada_corta ? ` - ${p.jornada_corta}` : '';
+      lines.push(`${idx + 1}. ${p.codigo_centro} ${p.nombre_centro} (${p.localidad}) - ${p.tipo} [${p.horas}]${jornadaTxt} - ${p.distancia_km.toFixed(1)} km (Lloc: ${p.lloc})`);
     });
 
     const textToCopy = lines.join('\n');

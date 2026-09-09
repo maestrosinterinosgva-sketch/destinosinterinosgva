@@ -50,9 +50,9 @@
       </div>
 
       <div class="nav-actions">
-        <button class="btn-coffee" id="btnOpenDonate" title="Apoyar este proyecto independiente">
+        <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener noreferrer" class="btn-coffee" title="Invítame a un café en Ko-fi">
           <span>☕</span> Invítame a un café
-        </button>
+        </a>
         <button class="btn-icon" id="btnThemeToggle" title="Cambiar tema claro/oscuro">
           <span id="themeIcon">🌙</span>
         </button>
@@ -173,11 +173,22 @@
 
         <!-- Jornada / Horas Filter -->
         <div class="filter-group">
-          <label for="filterJornada">Horas de Trabajo / Jornada</label>
+          <label for="filterJornada">Horas de Trabajo</label>
           <select id="filterJornada" class="filter-select">
-            <option value="ALL">Cualquier tipo de jornada</option>
+            <option value="ALL">Cualquier tipo de horas</option>
             <option value="COMPLETA">Solo Jornada Completa</option>
             <option value="PARCIAL">Solo Tiempo Parcial (Horas)</option>
+          </select>
+        </div>
+
+        <!-- Horario del Centro (Guía Conselleria) -->
+        <div class="filter-group">
+          <label for="filterHorarioCentro">Jornada del Centro (Conselleria)</label>
+          <select id="filterHorarioCentro" class="filter-select">
+            <option value="ALL">Todos los horarios de centro</option>
+            <option value="CONTINUA">🌞 Solo Jornada Continua (9:00 a 14:00)</option>
+            <option value="PARTIDA">⏱️ Solo Jornada Partida (9:00 a 17:00)</option>
+            <option value="SECUNDARIA">🏫 Horario IES / Secundaria</option>
           </select>
         </div>
 
@@ -271,9 +282,14 @@
         <button class="drawer-close" id="btnCloseDrawer" title="Cerrar ventana">&times;</button>
       </div>
       <div class="drawer-body">
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
-          Guarda y organiza las plazas que te interesan para tener tu lista lista a la hora de rellenar la solicitud telemática de Conselleria.
-        </p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem; background:var(--bg-main); padding:0.6rem 0.85rem; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.3;">
+            ↕️ <strong>Organiza tu preferencia:</strong> pulsa <strong>⬆️ / ⬇️</strong> para mover centros en tu orden de solicitud telemática.
+          </div>
+          <button type="button" id="btnSortFavByDistance" style="font-size:0.75rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:15px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); cursor:pointer;" title="Reordenar automáticamente de más cercano a más lejano">
+            📍 Por distancia
+          </button>
+        </div>
         <div id="favoritesListContainer"></div>
       </div>
       <div class="drawer-footer">
@@ -345,11 +361,12 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Data Files -->
-  <script src="data/municipios_coords.js?v=260908"></script>
-  <script src="data/stats_summary.js?v=260908"></script>
-  <script src="data/puestos_data.js?v=260908"></script>
+  <script src="data/municipios_coords.js?v=260909"></script>
+  <script src="data/stats_summary.js?v=260909"></script>
+  <script src="data/centros_jornadas.js?v=260909"></script>
+  <script src="data/puestos_data.js?v=260909"></script>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=260908"></script>
+  <script src="js/app.js?v=260909"></script>
 </body>
 </html>
