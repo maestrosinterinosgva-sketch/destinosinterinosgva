@@ -3,14 +3,18 @@ name: Actualización Automática Semanal de Puestos Ofertados
 on:
   schedule:
     # Se ejecuta de lunes a viernes desde las 06:00 UTC (08:00 hora peninsular española)
-    # hasta las 21:00 UTC (22:00/23:00 hora peninsular), cada 15 minutos en continuo.
-    - cron: '*/15 6-21 * * 1-5'
+    # hasta las 21:00 UTC (22:00/23:00 hora peninsular), cada 5 minutos.
+    - cron: '*/5 6-21 * * 1-5'
   workflow_dispatch:
     inputs:
       pdf_url:
         description: 'URL directa del nuevo PDF de puestos ofertados (opcional para forzar uno específico)'
         required: false
         default: ''
+
+concurrency:
+  group: auto-update-puestos
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -37,7 +41,7 @@ jobs:
           if [ -n "${{ github.event.inputs.pdf_url }}" ]; then
             python actualizar_puestos.py "${{ github.event.inputs.pdf_url }}"
           else
-            python bot_auto_actualizador.py --continuous
+            python bot_auto_actualizador.py
           fi
 
       - name: Guardar y publicar cambios en la web
