@@ -1281,7 +1281,12 @@
     }
 
     generatePrintDocument(favPlazas, false);
-    window.print();
+    const doc = document.getElementById('printDoc');
+    if (doc) void doc.offsetHeight;
+    
+    setTimeout(() => {
+      window.print();
+    }, 80);
   }
 
   function generatePrintDocument(plazas, isGeneric = false) {

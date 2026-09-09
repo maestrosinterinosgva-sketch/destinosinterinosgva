@@ -1516,8 +1516,10 @@ body {
 
   /* Reset global y forzado de fondo blanco y texto oscuro */
   html, body {
-    width: 100% !important;
+    display: block !important;
+    min-height: auto !important;
     height: auto !important;
+    width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
@@ -1529,19 +1531,8 @@ body {
     print-color-adjust: exact !important;
   }
 
-  /* Ocultar ABSOLUTAMENTE toda la interfaz web interactiva */
-  .navbar,
-  .banner-cross,
-  main,
-  footer,
-  aside,
-  .modal-backdrop,
-  .drawer-backdrop,
-  #favoritesDrawerBackdrop,
-  #donateModalBackdrop,
-  .toast,
-  button,
-  .ad-banner-container {
+  /* Ocultar toda la interfaz web interactiva */
+  body > *:not(#printDoc) {
     display: none !important;
     visibility: hidden !important;
   }
@@ -1550,6 +1541,7 @@ body {
   #printDoc {
     display: block !important;
     visibility: visible !important;
+    position: static !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
