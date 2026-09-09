@@ -153,6 +153,8 @@ def push_to_github():
             with open(index_path, "w", encoding="utf-8") as f:
                 f.write(content)
 
+        subprocess.run([git_cmd, "config", "user.name", "github-actions[bot]"], check=False)
+        subprocess.run([git_cmd, "config", "user.email", "github-actions[bot]@users.noreply.github.com"], check=False)
         subprocess.run([git_cmd, "add", "index.html", "data/"], check=True)
         subprocess.run([git_cmd, "commit", "-m", "Auto-update: Nuevos puestos publicados por Conselleria GVA"], check=True)
         subprocess.run([git_cmd, "push", "origin", "main"], check=True)
