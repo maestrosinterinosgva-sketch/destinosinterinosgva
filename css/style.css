@@ -697,18 +697,85 @@ body {
   margin-bottom: 0.75rem;
 }
 
+.distance-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
 .distance-badge {
   background: var(--primary-light);
   color: var(--primary);
   border: 1px solid var(--primary-border);
-  padding: 0.35rem 0.65rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.25rem;
   white-space: nowrap;
+}
+
+.rush-hour-badge {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  padding: 0.25rem 0.6rem;
+  border-radius: 16px;
+  font-size: 0.785rem;
+  font-weight: 750;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.rush-hour-badge strong {
+  font-weight: 850;
+  color: #9a3412;
+}
+
+.rush-hour-badge .rush-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.fluid-time-badge {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.fluid-time-badge .fluid-label {
+  font-size: 0.68rem;
+  opacity: 0.85;
+}
+
+[data-theme="dark"] .rush-hour-badge {
+  background: #7c2d1226;
+  color: #fb923c;
+  border-color: #9a3412;
+}
+
+[data-theme="dark"] .rush-hour-badge strong {
+  color: #fdba74;
+}
+
+[data-theme="dark"] .fluid-time-badge {
+  background: #14532d26;
+  color: #4ade80;
+  border-color: #166534;
 }
 
 .time-estimate {
@@ -721,6 +788,7 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-light);
+  white-space: nowrap;
 }
 
 .center-title {

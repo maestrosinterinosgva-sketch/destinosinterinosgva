@@ -223,13 +223,14 @@
     <!-- View Controls & Results Count -->
     <div class="view-control-bar">
       <div class="results-counter" id="resultsCountDisplay">
-        Mostrando <span id="countNumber">0</span> plazas ordenadas por cercanía
+        Mostrando <span id="countNumber">0</span> plazas ordenadas por tiempo en hora punta escolar
       </div>
 
       <div class="view-controls-right">
         <!-- Sort Select -->
         <select id="sortSelect" class="sort-select">
-          <option value="dist_asc" selected>Ordenar: Más cercanas primero 📍</option>
+          <option value="time_rush_asc" selected>Ordenar: Menor tiempo hora punta 🚗 (8:30-9:00)</option>
+          <option value="dist_asc">Ordenar: Más cercanas primero 📍</option>
           <option value="dist_desc">Ordenar: Más lejanas primero</option>
           <option value="horas_desc">Ordenar: Mayor número de horas</option>
           <option value="tipo">Ordenar: Por tipo (Vacantes primero)</option>
@@ -286,8 +287,8 @@
           <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.3;">
             ↕️ <strong>Organiza tu preferencia:</strong> pulsa <strong>⬆️ / ⬇️</strong> para mover centros en tu orden de solicitud telemática.
           </div>
-          <button type="button" id="btnSortFavByDistance" style="font-size:0.75rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:15px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); cursor:pointer;" title="Reordenar automáticamente de más cercano a más lejano">
-            📍 Por distancia
+          <button type="button" id="btnSortFavByDistance" style="font-size:0.75rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:15px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); cursor:pointer;" title="Reordenar automáticamente de menor a mayor tiempo de trayecto en hora punta matinal (8:30-9:00)">
+            🚗 Por tiempo punta (8:30h)
           </button>
         </div>
         <div id="favoritesListContainer"></div>
@@ -372,6 +373,6 @@
   <script src="data/puestos_data.js?v=260910"></script>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=260910"></script>
+  <script src="js/app.js?v=260910_traffic"></script>
 </body>
 </html>

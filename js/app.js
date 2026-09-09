@@ -27,7 +27,7 @@
       provincia: "ALL",
       searchQuery: ""
     },
-    sortBy: "dist_asc",
+    sortBy: "time_rush_asc",
     currentView: "list", // 'list', 'map', 'stats'
     favorites: new Set(),
     favoritesOrder: [],
@@ -200,14 +200,30 @@
     return linearKm * 1.22;
   }
 
-  // Estimación realista del tiempo de conducción según distancia
+  // Estimación realista del tiempo de conducción según distancia (tráfico fluido ordinario)
   function estimateDriveTime(km) {
     if (km <= 15) {
-      return Math.round(km / 38 * 60); // tramo urbano / cercanías
+      return Math.max(3, Math.round(km / 36 * 60)); // tramo urbano / cercanías fluido
     } else if (km <= 50) {
       return Math.round(km / 65 * 60); // interurbano / comarcal
     } else {
       return Math.round(km / 85 * 60); // autovía
+    }
+  }
+
+  // Estimación de tiempo en coche en hora punta escolar (8:30 - 9:00 AM)
+  // Modela el tráfico matinal real: retenciones de acceso a municipios, salidas/entradas escolares,
+  // semáforos, dobles filas de colegios y tiempo mínimo de maniobra/aparcamiento (+4 a +12 min).
+  function estimateDriveTimeRushHour(km) {
+    if (km <= 15) {
+      // Entorno urbano y circunvalación próxima: semáforos, doble fila escolar y colas de acceso (~23 km/h media + 4 min margen)
+      return Math.max(6, Math.round((km / 23 * 60) + 4));
+    } else if (km <= 50) {
+      // Vías metropolitanas y autovías de acceso (V-30, V-31, CV-35, A-7, A-70) con retenciones (~44 km/h media + 6 min tramo urbano)
+      return Math.round((km / 44 * 60) + 6);
+    } else {
+      // Trayectos de largo recorrido: tramos despejados a 80 km/h media, pero atascos en salidas y entradas a destino (+12 min)
+      return Math.round((km / 80 * 60) + 12);
     }
   }
 
@@ -487,7 +503,7 @@
     state.filters.provincia = "ALL";
     state.filters.searchQuery = "";
     state.maxDistance = 150;
-    state.sortBy = "dist_asc";
+    state.sortBy = "time_rush_asc";
 
     document.getElementById('filterCuerpo').value = "MAESTROS";
     document.getElementById('filterItinerante').value = "ALL";
@@ -498,7 +514,7 @@
     document.getElementById('searchInput').value = "";
     document.getElementById('maxDistance').value = "150";
     document.getElementById('distanceValDisplay').textContent = "Todas las distancias";
-    document.getElementById('sortSelect').value = "dist_asc";
+    document.getElementById('sortSelect').value = "time_rush_asc";
 
     document.querySelectorAll('#tipoPills .pill-btn').forEach(b => b.classList.add('active'));
 
@@ -511,10 +527,11 @@
     const oLat = state.origin.lat;
     const oLng = state.origin.lng;
 
-    // Calcular distancia y tiempo para todas las plazas
+    // Calcular distancia y tiempos (fluido y hora punta) para todas las plazas
     state.allPlazas.forEach(p => {
       p.distancia_km = calculateDistance(oLat, oLng, p.lat, p.lng);
       p.tiempo_min = estimateDriveTime(p.distancia_km);
+      p.tiempo_punta = estimateDriveTimeRushHour(p.distancia_km);
     });
 
     // Filtrar
@@ -595,7 +612,9 @@
 
   // --- Ordenación ---
   function sortPlazas(arr, sortBy) {
-    if (sortBy === 'dist_asc') {
+    if (sortBy === 'time_rush_asc') {
+      arr.sort((a, b) => (a.tiempo_punta || 9999) - (b.tiempo_punta || 9999));
+    } else if (sortBy === 'dist_asc') {
       arr.sort((a, b) => a.distancia_km - b.distancia_km);
     } else if (sortBy === 'dist_desc') {
       arr.sort((a, b) => b.distancia_km - a.distancia_km);
@@ -714,7 +733,8 @@
                        (p.tipo === 'SUSTITUCIÓN INDETERMINADA' ? 'indeterminada' : 'determinada');
 
       const distFmt = p.distancia_km < 9900 ? `${p.distancia_km.toFixed(1)} km` : 'Distancia N/D';
-      const timeFmt = p.distancia_km < 9900 ? formatTimeEstimate(p.tiempo_min) : '';
+      const timeRushFmt = p.distancia_km < 9900 && p.tiempo_punta ? formatTimeEstimate(p.tiempo_punta) : '';
+      const timeFluidFmt = p.distancia_km < 9900 && p.tiempo_min ? formatTimeEstimate(p.tiempo_min) : '';
 
       // Google Maps Route URL
       const gmapsUrl = p.lat && p.lng ? 
@@ -725,9 +745,20 @@
         <article class="plaza-card ${borderClass}" data-lloc="${p.lloc}">
           <div>
             <div class="plaza-card-top">
-              <div class="distance-badge" title="Distancia aproximada por carretera">
-                <span>📍</span> <span>${distFmt}</span>
-                ${timeFmt ? `<span class="time-estimate">(${timeFmt})</span>` : ''}
+              <div class="distance-badge-group">
+                <div class="distance-badge" title="Distancia aproximada por carretera">
+                  <span>📍</span> <span>${distFmt}</span>
+                </div>
+                ${p.distancia_km < 9900 ? `
+                  <div class="rush-hour-badge" title="Tiempo estimado en coche en hora punta de entrada escolar (8:30 a 9:00 AM) considerando tráfico y retenciones habituales">
+                    <span>🚗</span> <strong>${timeRushFmt}</strong>
+                    <span class="rush-label">(8:30-9h)</span>
+                  </div>
+                  <div class="fluid-time-badge" title="Tiempo estimado en coche con tráfico fluido">
+                    <span>🟢</span> <span>${timeFluidFmt}</span>
+                    <span class="fluid-label">fluido</span>
+                  </div>
+                ` : ''}
               </div>
               <div class="plaza-meta-num">
                 #${p.numero} · Lloc: <strong>${p.lloc}</strong>
@@ -928,14 +959,24 @@
       });
 
       const popupHtml = `
-        <div style="font-family:sans-serif; max-width:260px;">
+        <div style="font-family:sans-serif; max-width:275px;">
           <h4 style="font-size:0.95rem; margin:0.2rem 0; color:#0f172a;">${p.nombre_centro}</h4>
-          <div style="font-size:0.8rem; color:#475569; margin-bottom:0.4rem;">📍 ${p.localidad} (${p.distancia_km.toFixed(1)} km)</div>
+          <div style="font-size:0.8rem; color:#475569; margin-bottom:0.4rem;">
+            📍 ${p.localidad} (${p.distancia_km.toFixed(1)} km)
+            <div style="margin-top:0.35rem; display:flex; gap:0.3rem; flex-wrap:wrap; align-items:center;">
+              <span style="background:#fff7ed; color:#c2410c; padding:0.18rem 0.45rem; border-radius:12px; font-weight:750; font-size:0.75rem; border:1px solid #fed7aa;" title="Hora punta de entrada al colegio (8:30 a 9:00)">
+                🚗 <strong>~${p.tiempo_punta} min</strong> (8:30-9h)
+              </span>
+              <span style="background:#f0fdf4; color:#15803d; padding:0.18rem 0.45rem; border-radius:12px; font-size:0.72rem; border:1px solid #bbf7d0;" title="Tráfico fluido">
+                🟢 ~${p.tiempo_min} min fluido
+              </span>
+            </div>
+          </div>
           <div style="font-size:0.75rem; font-weight:700; color:${color}; margin-bottom:0.2rem;">${p.tipo} · ${p.horas}</div>
           ${p.jornada === 'CONTINUA' ? '<div style="font-size:0.75rem; color:#b45309; font-weight:700; margin-bottom:0.3rem;">🌞 Jornada Continua (9:00 a 14:00)</div>' : (p.jornada === 'PARTIDA' ? '<div style="font-size:0.75rem; color:#475569; font-weight:600; margin-bottom:0.3rem;">⏱️ Jornada Partida (9:00 a 17:00)</div>' : '')}
           <div style="font-size:0.75rem; color:#334155;"><strong>${p.especialidad}</strong></div>
           <div style="margin-top:0.6rem;">
-            <a href="https://www.google.com/maps/dir/?api=1&origin=${state.origin.lat},${state.origin.lng}&destination=${p.lat},${p.lng}" target="_blank" style="color:#0284c7; font-size:0.8rem; font-weight:600; text-decoration:none;">🗺️ Cómo llegar &rarr;</a>
+            <a href="https://www.google.com/maps/dir/?api=1&origin=${state.origin.lat},${state.origin.lng}&destination=${p.lat},${p.lng}&travelmode=driving" target="_blank" style="color:#0284c7; font-size:0.8rem; font-weight:600; text-decoration:none;">🗺️ Abrir ruta en Google Maps &rarr;</a>
           </div>
         </div>
       `;
@@ -1076,7 +1117,9 @@
     state.favoritesOrder.sort((a, b) => {
       const pa = plazaMap.get(a);
       const pb = plazaMap.get(b);
-      return (pa ? pa.distancia_km : 9999) - (pb ? pb.distancia_km : 9999);
+      const ta = pa ? (pa.tiempo_punta != null ? pa.tiempo_punta : pa.distancia_km) : 9999;
+      const tb = pb ? (pb.tiempo_punta != null ? pb.tiempo_punta : pb.distancia_km) : 9999;
+      return ta - tb;
     });
     saveFavoritesState();
     renderFavoritesList();
@@ -1183,10 +1226,15 @@
               </div>
             </div>
 
-            <div style="display:flex; gap:0.3rem; align-items:center;">
-              <span class="distance-badge" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
-                📍 ${p.distancia_km.toFixed(1)} km (~${p.tiempo_min} min)
+            <div style="display:flex; gap:0.3rem; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
+              <span class="distance-badge" style="font-size:0.72rem; padding:0.18rem 0.45rem;" title="Distancia aproximada">
+                📍 ${p.distancia_km.toFixed(1)} km
               </span>
+              ${p.tiempo_punta ? `
+                <span class="rush-hour-badge" style="font-size:0.72rem; padding:0.18rem 0.45rem;" title="Tiempo estimado en coche en hora punta escolar (8:30-9:00)">
+                  🚗 <strong>~${p.tiempo_punta} min</strong> (8:30h)
+                </span>
+              ` : ''}
               <button type="button" style="background:none; border:none; color:#ef4444; font-size:1.1rem; cursor:pointer; padding:0 0.3rem;" onclick="window.removeFavoriteItem('${p.lloc}')" title="Eliminar de mi orden">&times;</button>
             </div>
           </div>
@@ -1254,7 +1302,8 @@
 
     favPlazas.forEach((p, idx) => {
       const jornadaTxt = p.jornada_corta ? ` - ${p.jornada_corta}` : '';
-      lines.push(`${idx + 1}. ${p.codigo_centro} ${p.nombre_centro} (${p.localidad}) - ${p.tipo} [${p.horas}]${jornadaTxt} - ${p.distancia_km.toFixed(1)} km (Lloc: ${p.lloc})`);
+      const trafficTxt = p.tiempo_punta ? ` [🚗 ~${p.tiempo_punta} min punta 8:30-9h]` : '';
+      lines.push(`${idx + 1}. ${p.codigo_centro} ${p.nombre_centro} (${p.localidad}) - ${p.tipo} [${p.horas}]${jornadaTxt} - ${p.distancia_km.toFixed(1)} km${trafficTxt} (Lloc: ${p.lloc})`);
     });
 
     const textToCopy = lines.join('\n');
@@ -1324,7 +1373,8 @@
       const horasTxt = p.es_completa ? 'J. Completa' : `${p.horas}h`;
       const itinTxt = p.itinerante === 'SI' ? ' · 🚗 Itin.' : '';
       const distTxt = typeof p.distancia_km === 'number' ? `${p.distancia_km.toFixed(1)} km` : '-';
-      const timeTxt = p.tiempo_min ? `~${p.tiempo_min} min` : '';
+      const timeRushTxt = p.tiempo_punta ? `🚗 ~${p.tiempo_punta} min (8:30h)` : '';
+      const timeFluidTxt = p.tiempo_min ? `🟢 ~${p.tiempo_min} min` : '';
 
       rowsHtml += `
         <tr>
@@ -1347,8 +1397,9 @@
           </td>
           <td>${jornadaTag}</td>
           <td style="text-align:right;">
-            <div style="font-weight:800; font-size:8pt; color:#0369a1;">${distTxt}</div>
-            <div style="font-size:7pt; color:#64748b;">${timeTxt}</div>
+            <div style="font-weight:800; font-size:7.8pt; color:#0369a1;">${distTxt}</div>
+            ${timeRushTxt ? `<div style="font-size:6.8pt; color:#c2410c; font-weight:700;">${timeRushTxt}</div>` : ''}
+            ${timeFluidTxt ? `<div style="font-size:6.2pt; color:#15803d;">${timeFluidTxt}</div>` : ''}
           </td>
           <td style="text-align:center;">
             <div class="print-check-box" title="Marcar al registrar en OVIDOC"></div>
