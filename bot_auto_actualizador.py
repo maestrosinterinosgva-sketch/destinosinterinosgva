@@ -127,9 +127,39 @@ def check_and_update():
         run_actualizacion()
         save_last_processed_info(newest_url)
         print("[OK] ¡Actualización completada con éxito!")
+        push_to_github()
         return True
     except Exception as e:
         print(f"[-] Error al procesar {newest_url}: {e}")
+        return False
+
+def push_to_github():
+    print("[*] Publicando cambios automáticamente en GitHub Pages...")
+    import subprocess
+    git_cmd = os.path.join(os.path.dirname(__file__), "tools", "git", "cmd", "git.exe")
+    if not os.path.exists(git_cmd):
+        git_cmd = "git"
+    
+    try:
+        # Actualizar cache busters en index.html
+        index_path = os.path.join(os.path.dirname(__file__), "index.html")
+        if os.path.exists(index_path):
+            with open(index_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            import time
+            v = str(int(time.time()))
+            content = re.sub(r'data/puestos_data\.js\?v=\w+', f'data/puestos_data.js?v={v}', content)
+            content = re.sub(r'data/stats_summary\.js\?v=\w+', f'data/stats_summary.js?v={v}', content)
+            with open(index_path, "w", encoding="utf-8") as f:
+                f.write(content)
+
+        subprocess.run([git_cmd, "add", "index.html", "data/"], check=True)
+        subprocess.run([git_cmd, "commit", "-m", "Auto-update: Nuevos puestos publicados por Conselleria GVA"], check=True)
+        subprocess.run([git_cmd, "push", "origin", "main"], check=True)
+        print("[OK] ¡Cambios subidos a GitHub con éxito! Estará visible online en ~60 segundos.")
+        return True
+    except Exception as e:
+        print(f"[-] Error al subir a GitHub: {e}")
         return False
 
 if __name__ == "__main__":
