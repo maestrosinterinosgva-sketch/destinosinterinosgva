@@ -22,7 +22,17 @@ if "%TARGET%"=="" (
 )
 
 echo.
+echo [*] Sincronizando con GitHub Pages...
+set "GIT_EXE=%~dp0tools\git\cmd\git.exe"
+if exist "%GIT_EXE%" (
+    "%GIT_EXE%" add data/ index.html destinos_web.zip >nul 2>nul
+    "%GIT_EXE%" commit -m "Actualización manual de puestos ofertados [skip ci]" >nul 2>nul
+    "%GIT_EXE%" push origin main >nul 2>nul
+    echo [OK] Web de Destinos actualizada online para tus compañeros.
+)
+
+echo.
 echo =======================================================================
-echo Proceso finalizado. Puedes abrir 'index.html' para ver los datos.
+echo Proceso finalizado. Web actualizada y lista para tus compañeros.
 echo =======================================================================
 pause
