@@ -1494,7 +1494,7 @@
       </div>
 
       <div class="print-footer">
-        <div>Generado con <strong>Destinos Interinos GVA</strong> (https://herrizpab-a11y.github.io/destinosinterinosgva/)</div>
+        <div>Generado con <strong>Destinos Interinos GVA</strong> (https://destinos.bolsamaestrosinterinosgva.es/)</div>
         <div>Datos oficiales: Generalitat Valenciana (Conselleria d'Educació, Cultura, Universitats i Ocupació)</div>
       </div>
     `;

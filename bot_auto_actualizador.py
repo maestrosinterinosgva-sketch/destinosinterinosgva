@@ -144,7 +144,7 @@ def check_and_update():
                         fecha = st.get("fecha_adjudicacion", fecha)
                         total_plazas = st.get("total_plazas", 0)
                         vacantes = st.get("total_vacantes", 0)
-                web_url = os.environ.get("WEB_URL", "https://herrizpab-a11y.github.io/destinosinterinosgva/")
+                web_url = os.environ.get("WEB_URL", "https://destinos.bolsamaestrosinterinosgva.es/")
                 msg = (
                     f"🤖 <b>¡Nuevos Puestos Ofertados detectados y publicados en Destinos GVA!</b>\n\n"
                     f"📅 <b>Convocatoria:</b> {fecha}\n"

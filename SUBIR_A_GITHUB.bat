@@ -21,7 +21,7 @@ if not exist "%GIT_EXE%" (
 )
 
 echo Introduce el enlace de tu repositorio de GitHub:
-echo (Ejemplo: https://github.com/herrizpab-a11y/destinos)
+echo (Ejemplo: https://github.com/maestrosinterinosgva-sketch/destinosinterinosgva)
 echo.
 set /p "REPO_URL=👉 Enlace del repositorio: "
 if "!REPO_URL!"=="" (
