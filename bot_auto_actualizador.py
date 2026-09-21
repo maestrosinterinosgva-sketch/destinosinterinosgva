@@ -128,12 +128,41 @@ def check_and_update():
         save_last_processed_info(newest_url)
         print("[OK] ¡Actualización completada con éxito!")
         push_to_github()
+
+        # Notificar por Telegram si está configurado
+        try:
+            from bot_telegram import get_telegram_config, send_telegram_message
+            cfg = get_telegram_config()
+            if cfg.get("token") and cfg.get("chat_id"):
+                stats_file = "data/stats_summary.json"
+                fecha = "Reciente"
+                total_plazas, vacantes = 0, 0
+                if os.path.exists(stats_file):
+                    import json
+                    with open(stats_file, "r", encoding="utf-8") as sf:
+                        st = json.load(sf)
+                        fecha = st.get("fecha_adjudicacion", fecha)
+                        total_plazas = st.get("total_plazas", 0)
+                        vacantes = st.get("total_vacantes", 0)
+                web_url = os.environ.get("WEB_URL", "https://herrizpab-a11y.github.io/destinosinterinosgva/")
+                msg = (
+                    f"🤖 <b>¡Nuevos Puestos Ofertados detectados y publicados en Destinos GVA!</b>\n\n"
+                    f"📅 <b>Convocatoria:</b> {fecha}\n"
+                    f"🏫 <b>Total Plazas:</b> {total_plazas:,}\n"
+                    f"🟢 <b>Vacantes:</b> {vacantes:,}\n\n"
+                    f"🌐 <b>Ver web:</b>\n"
+                    f"{web_url}"
+                )
+                send_telegram_message(cfg["token"], cfg["chat_id"], msg)
+        except Exception as e_tg:
+            print(f"[i] Telegram info: {e_tg}")
+
         return True
     except Exception as e:
         print(f"[-] Error al procesar {newest_url}: {e}")
         return False
 
-def push_to_github():
+def push_to_github(commit_msg=None):
     print("[*] Publicando cambios automáticamente en GitHub Pages...")
     import subprocess
     git_cmd = os.path.join(os.path.dirname(__file__), "tools", "git", "cmd", "git.exe")
@@ -155,8 +184,12 @@ def push_to_github():
 
         subprocess.run([git_cmd, "config", "user.name", "github-actions[bot]"], check=False)
         subprocess.run([git_cmd, "config", "user.email", "github-actions[bot]@users.noreply.github.com"], check=False)
-        subprocess.run([git_cmd, "add", "index.html", "data/"], check=True)
-        subprocess.run([git_cmd, "commit", "-m", "Auto-update: Nuevos puestos publicados por Conselleria GVA"], check=True)
+        add_files = ["index.html", "data/"]
+        if os.path.exists(os.path.join(os.path.dirname(__file__), "destinos_web.zip")):
+            add_files.append("destinos_web.zip")
+        subprocess.run([git_cmd, "add"] + add_files, check=True)
+        final_msg = commit_msg or "Auto-update: Nuevos puestos publicados por Conselleria GVA"
+        subprocess.run([git_cmd, "commit", "-m", final_msg], check=True)
         subprocess.run([git_cmd, "push", "origin", "main"], check=True)
         print("[OK] ¡Cambios subidos a GitHub con éxito! Estará visible online en ~60 segundos.")
         return True

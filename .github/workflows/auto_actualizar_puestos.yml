@@ -1,6 +1,11 @@
 name: Actualización Automática Semanal de Puestos Ofertados
 
 on:
+  push:
+    paths:
+      - '2*.pdf'
+      - '*pue_prov*.pdf'
+      - 'telegram_*.pdf'
   schedule:
     # Se ejecuta de lunes a viernes desde las 06:00 UTC (08:00 hora peninsular española)
     # hasta las 21:00 UTC (22:00/23:00 hora peninsular), cada 5 minutos.
@@ -36,8 +41,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install pymupdf
 
-      - name: Ejecutar bot de comprobación y actualización
+      - name: Ejecutar comprobación del bot (Telegram y Fuentes)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          # 1. Comprobar si el usuario envió un PDF por Telegram
+          python bot_telegram.py
+
+          # 2. Si se pasa una URL manual o se rastrean las fuentes
           if [ -n "${{ github.event.inputs.pdf_url }}" ]; then
             python actualizar_puestos.py "${{ github.event.inputs.pdf_url }}"
           else

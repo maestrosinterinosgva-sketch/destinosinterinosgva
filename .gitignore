@@ -4,3 +4,6 @@ __pycache__/
 puestos_descargados_auto.pdf
 *.tmp
 .DS_Store
+telegram_*.pdf
+data/telegram_config.json
+data/telegram_last_offset.txt
