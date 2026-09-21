@@ -19,13 +19,31 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-MVLBLWFQVE');
+
+    // Medición instantánea de clics en enlaces de Wood & Print Partners
+    document.addEventListener('click', function(e) {
+      var link = e.target && e.target.closest ? e.target.closest('a[href*="woodandprintpartners"]') : null;
+      if (!link) return;
+      var loc = 'otra';
+      if (link.closest('.navbar')) loc = 'cabecera';
+      else if (link.closest('#woodAndPrintPromo')) loc = 'tarjeta_destacada';
+      else if (link.closest('.app-footer')) loc = 'pie_pagina';
+      if (typeof gtag === 'function') {
+        gtag('event', 'click_woodandprint', {
+          'event_category': 'promocion',
+          'event_label': loc,
+          'ubicacion_boton': loc,
+          'destino': 'instagram'
+        });
+      }
+    });
   </script>
 
   <!-- Google AdSense Oficial -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7842650272336816" crossorigin="anonymous"></script>
 
   <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/style.css?v=260909_print2">
+  <link rel="stylesheet" href="css/style.css?v=260921_woodprint">
 </head>
 <body>
 
@@ -50,6 +68,9 @@
       </div>
 
       <div class="nav-actions">
+        <a href="https://www.instagram.com/woodandprintpartners/" target="_blank" rel="noopener noreferrer" class="btn-instagram-nav" title="Regalos 3D y grabado láser personalizados para alumnos y profes">
+          <span>🎁</span> Wood & Print (@woodandprintpartners)
+        </a>
         <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener noreferrer" class="btn-coffee" title="¿Te ha resultado útil? Ayúdame a mantener la web activa colaborando con los costes">
           <span>☕</span> Ayuda a mantener la web activa
         </a>
@@ -79,6 +100,57 @@
       <a href="https://bolsamaestrosinterinosgva.es/" target="_blank" rel="noopener" class="btn-cross-promo">
         <span>🎯</span> Abrir Localizador de Bolsa &rarr;
       </a>
+    </section>
+
+    <!-- Sección Destacada: Wood & Print Partners (Regalos 3D y Grabado Láser para Alumnos) -->
+    <section class="wood-promo-card" id="woodAndPrintPromo">
+      <div class="wood-promo-header">
+        <span class="wood-badge">🎁 PROYECTO COLABORADOR • HECHO A MANO</span>
+        <span class="wood-subbadge">✨ Ideal para docentes, tutorías y colegios</span>
+      </div>
+      <div class="wood-title">
+        <span>🪵 Wood & Print Partners</span>
+        <span class="wood-title-sub">— Detalles 3D y Grabado Láser para Alumnos</span>
+      </div>
+      <p class="wood-desc">
+        ¿Quieres tener un detalle motivador, celebrar una graduación, fin de curso o bienvenida con tus alumnos? En <strong>Wood & Print Partners</strong> diseñamos y fabricamos recuerdos personalizados con el nombre de cada alumno/a, el logotipo del centro o dedicatorias especiales.
+      </p>
+
+      <div class="wood-features">
+        <div class="wood-feature-item">
+          <div class="wood-feature-icon">🏷️</div>
+          <div class="wood-feature-text">
+            <strong>Llaveros 3D con Nombre</strong>
+            <span>Personalizados uno a uno con el nombre de cada niño/a, colores a elegir y tipografías escolares.</span>
+          </div>
+        </div>
+
+        <div class="wood-feature-item">
+          <div class="wood-feature-icon">🪵</div>
+          <div class="wood-feature-text">
+            <strong>Grabado Láser en Madera</strong>
+            <span>Marcapáginas con dedicatoria, medallas de graduación, diplomas de madera y placas de recuerdo.</span>
+          </div>
+        </div>
+
+        <div class="wood-feature-item">
+          <div class="wood-feature-icon">🎓</div>
+          <div class="wood-feature-text">
+            <strong>Figuras y Proyectos de Aula</strong>
+            <span>Mascotas de clase, elementos para proyectos educativos, gamificación y eventos de centro.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="wood-actions">
+        <div class="wood-note">
+          <span>📦</span> <span>Encargos a medida para clases completas y centros educativos.</span>
+        </div>
+        <a href="https://www.instagram.com/woodandprintpartners/" target="_blank" rel="noopener noreferrer" class="btn-instagram" title="Visitar perfil de Instagram de Wood & Print Partners">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          <span>Ver catálogo y encargos en Instagram (@woodandprintpartners) &rarr;</span>
+        </a>
+      </div>
     </section>
 
     <!-- Hero Card: Origin Municipality & Distance -->
@@ -344,7 +416,7 @@
           </a>
 
           <!-- Opción 2: Compartir por WhatsApp -->
-          <a href="https://api.whatsapp.com/send?text=%C2%A1Hola!%20He%20encontrado%20este%20calculador%20de%20proximidad%20para%20las%20plazas%20ofertadas%20de%20maestros%20de%20Conselleria.%20Te%20ordena%20los%20colegios%20por%20km%20y%20minutos%20desde%20tu%20casa:%20https://herrizpab-a11y.github.io/destinosinterinosgva/" target="_blank" rel="noopener" class="donate-option-card share-card">
+          <a href="https://api.whatsapp.com/send?text=%C2%A1Hola!%20He%20encontrado%20este%20calculador%20de%20proximidad%20para%20las%20plazas%20ofertadas%20de%20maestros%20de%20Conselleria.%20Te%20ordena%20los%20colegios%20por%20km%20y%20minutos%20desde%20tu%20casa:%20https://destinos.bolsamaestrosinterinosgva.es/" target="_blank" rel="noopener" class="donate-option-card share-card">
             <div class="donate-option-icon">📢</div>
             <div class="donate-option-info">
               <div class="donate-option-title">Compártelo en tus grupos de WhatsApp</div>
@@ -360,11 +432,14 @@
   <!-- Footer -->
   <footer class="app-footer">
     <p><strong>Destinos Docentes Comunitat Valenciana</strong> · Desarrollado para ayudar al profesorado interino a calcular distancias y ordenar sus solicitudes telemáticas.</p>
-    <p style="margin-top:0.4rem;">
-      <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:0.35rem; font-weight:700; background:#fef3c7; color:#92400e; padding:0.35rem 0.85rem; border-radius:20px; text-decoration:none; border:1px solid #fde68a;">
+    <div style="margin-top:0.6rem; display:flex; flex-wrap:wrap; justify-content:center; gap:0.6rem; align-items:center;">
+      <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:0.35rem; font-weight:700; background:#fef3c7; color:#92400e; padding:0.35rem 0.85rem; border-radius:20px; text-decoration:none; border:1px solid #fde68a; font-size:0.825rem;">
         <span>☕</span> ¿Te ha resultado útil? Ayúdame a mantener la web activa colaborando con los costes
       </a>
-    </p>
+      <a href="https://www.instagram.com/woodandprintpartners/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.35rem; font-weight:700; background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color:#ffffff; padding:0.35rem 0.85rem; border-radius:20px; text-decoration:none; font-size:0.825rem; box-shadow:0 2px 4px rgba(220,39,67,0.25);" title="Regalos 3D y grabados personalizados para alumnos">
+        <span>🎁</span> Wood & Print Partners (Regalos para alumnos)
+      </a>
+    </div>
     <p style="margin-top:0.4rem; font-size:0.75rem; color:var(--text-light);">
       Fuente oficial: Generalitat Valenciana (Conselleria d'Educació, Cultura, Universitats i Ocupació). Este sitio procesa los datos públicos de la convocatoria semanal.
     </p>
