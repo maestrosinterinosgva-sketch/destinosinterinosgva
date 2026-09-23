@@ -1,13 +1,24 @@
 {
-  "fecha_adjudicacion": "Fecha oficial",
-  "fecha_publicacion": "",
-  "total_plazas": 0,
-  "total_maestros": 0,
-  "total_secundaria": 0,
-  "total_vacantes": 0,
-  "total_sustituciones_indet": 0,
-  "total_sustituciones_det": 0,
-  "total_itinerantes": 0,
-  "total_jornada_parcial": 0,
-  "especialidades_maestros": {}
+  "fecha_adjudicacion": "24/09/2026",
+  "fecha_publicacion": "23/09/2026",
+  "total_plazas": 399,
+  "total_maestros": 174,
+  "total_secundaria": 190,
+  "total_vacantes": 38,
+  "total_sustituciones_indet": 298,
+  "total_sustituciones_det": 63,
+  "total_itinerantes": 19,
+  "total_jornada_parcial": 53,
+  "especialidades_maestros": {
+    "EDUCACIÓN INFANTIL": 43,
+    "LENGUA EXTRANJERA: INGLÉS": 11,
+    "EDUCACIÓN FÍSICA": 9,
+    "MÚSICA": 4,
+    "AUDICIÓN Y LENGUAJE": 23,
+    "PEDAGOGÍA TERAPÉUTICA": 33,
+    "EDUCACIÓN PRIMARIA": 37,
+    "EDUCACIÓN ESPECIAL: AUDICIÓN Y LENGUAJE": 2,
+    "EDUCACIÓN ESPECIAL: PEDAGOGÍA TERAPÉUTICA": 4,
+    "FPA PRIMARIA": 8
+  }
 }
