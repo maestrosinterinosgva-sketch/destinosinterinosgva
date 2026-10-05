@@ -48,11 +48,11 @@
 <body>
 
   <!-- Selector de Cuerpo Superior (Primaria vs Secundaria) -->
-  <div style="background:linear-gradient(90deg, #1e293b 0%, #0f172a 100%); color:#ffffff; padding:8px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+  <div style="background:#0f172a; color:#ffffff; padding:8px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-bottom:1px solid #1e293b;">
     <div style="display:flex; align-items:center; gap:8px; font-size:0.875rem; font-weight:700;">
       <span>🏛️ Portal Destinos GVA:</span>
-      <div style="display:inline-flex; background:rgba(255,255,255,0.1); border-radius:8px; padding:3px; gap:4px;">
-        <span style="background:#0284c7; color:#ffffff; padding:4px 14px; border-radius:6px; font-weight:800; font-size:0.825rem;">
+      <div style="display:inline-flex; background:rgba(255,255,255,0.08); border-radius:8px; padding:3px; gap:4px; border:1px solid rgba(255,255,255,0.12);">
+        <span style="background:#1e40af; color:#ffffff; padding:4px 14px; border-radius:6px; font-weight:700; font-size:0.825rem;">
           🎒 Destinos Primaria (Colegios)
         </span>
         <a href="https://bolsamaestrosinterinosgva.es/secundaria/destinos.html" style="color:#cbd5e1; text-decoration:none; padding:4px 12px; border-radius:6px; font-weight:600; font-size:0.825rem;">
@@ -86,11 +86,8 @@
       </div>
 
       <div class="nav-actions">
-        <a href="https://www.instagram.com/woodandprintpartners/" target="_blank" rel="noopener noreferrer" class="btn-instagram-nav" title="Regalos 3D y grabado láser personalizados para alumnos y profes">
-          <span>🎁</span> Wood & Print (@woodandprintpartners)
-        </a>
         <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener noreferrer" class="btn-coffee" title="¿Te ha resultado útil? Ayúdame a mantener la web activa colaborando con los costes">
-          <span>☕</span> Ayuda a mantener la web activa
+          <span>☕</span> Apoyar mantenimiento
         </a>
         <button class="btn-icon" id="btnThemeToggle" title="Cambiar tema claro/oscuro">
           <span id="themeIcon">🌙</span>
@@ -105,20 +102,13 @@
   <!-- Main Container -->
   <main class="main-content">
 
-    <!-- Cross Promotion Card: Enlace a la web hermana de Interinos -->
-    <section class="cross-promo-card">
-      <div class="cross-promo-left">
-        <div class="cross-promo-icon">📊</div>
-        <div class="cross-promo-content">
-          <div class="cross-promo-tag">🔗 HERRAMIENTA HERMANA RECOMENDADA</div>
-          <h3 class="cross-promo-title">¿Quieres saber cómo se ha movido tu posición en la bolsa?</h3>
-          <p class="cross-promo-desc">Consulta los últimos cortes de la bolsa, personas desactivadas y cuántos puestos te faltan para ser nombrado/a con nuestro <strong>Localizador de Interinos GVA</strong>.</p>
-        </div>
+    <!-- Aviso Informativo Bolsa Maestros -->
+    <aside class="cross-promo-bar">
+      <div class="cross-promo-content">
+        <span class="cross-promo-badge">📊 Bolsa Activa</span>
+        <span>¿Quieres consultar tu posición depurada y cortes de la bolsa? Accede al <a href="https://bolsamaestrosinterinosgva.es/" target="_blank" rel="noopener" class="cross-promo-link">Localizador de Interinos de Maestros &rarr;</a></span>
       </div>
-      <a href="https://bolsamaestrosinterinosgva.es/" target="_blank" rel="noopener" class="btn-cross-promo">
-        <span>🎯</span> Abrir Localizador de Bolsa &rarr;
-      </a>
-    </section>
+    </aside>
 
     <!-- Sección Destacada: Wood & Print Partners (Regalos 3D y Grabado Láser para Alumnos) -->
     <section class="wood-promo-card" id="woodAndPrintPromo">
@@ -424,7 +414,7 @@
 
         <div class="donate-options">
           <!-- Opción 1: Ko-fi / Tarjeta -->
-          <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener" class="donate-option-card" style="border: 2px solid #38bdf8; background: var(--primary-light);">
+          <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener" class="donate-option-card" style="border: 1px solid var(--border); background: var(--primary-light);">
             <div class="donate-option-icon" style="background: #ffffff;">☕</div>
             <div class="donate-option-info">
               <div class="donate-option-title" style="color: var(--primary);">Colaborar con el mantenimiento (2€ / 3€)</div>
@@ -451,11 +441,11 @@
   <footer class="app-footer">
     <p><strong>Destinos Docentes Comunitat Valenciana</strong> · Desarrollado para ayudar al profesorado interino a calcular distancias y ordenar sus solicitudes telemáticas.</p>
     <div style="margin-top:0.6rem; display:flex; flex-wrap:wrap; justify-content:center; gap:0.6rem; align-items:center;">
-      <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:0.35rem; font-weight:700; background:#fef3c7; color:#92400e; padding:0.35rem 0.85rem; border-radius:20px; text-decoration:none; border:1px solid #fde68a; font-size:0.825rem;">
-        <span>☕</span> ¿Te ha resultado útil? Ayúdame a mantener la web activa colaborando con los costes
+      <a href="https://ko-fi.com/buscadorinterinos" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:0.35rem; font-weight:600; background:#fef3c7; color:#92400e; padding:0.35rem 0.85rem; border-radius:20px; text-decoration:none; border:1px solid #fde68a; font-size:0.825rem;">
+        <span>☕</span> Apoyar mantenimiento de la web
       </a>
-      <a href="https://www.instagram.com/woodandprintpartners/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.35rem; font-weight:700; background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color:#ffffff; padding:0.35rem 0.85rem; border-radius:20px; text-decoration:none; font-size:0.825rem; box-shadow:0 2px 4px rgba(220,39,67,0.25);" title="Regalos 3D y grabados personalizados para alumnos">
-        <span>🎁</span> Wood & Print Partners (Regalos para alumnos)
+      <a href="https://www.instagram.com/woodandprintpartners/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.35rem; font-weight:600; background:#f8fafc; color:#334155; padding:0.35rem 0.85rem; border-radius:20px; text-decoration:none; border:1px solid #cbd5e1; font-size:0.825rem;" title="Regalos 3D y grabados personalizados para alumnos">
+        <span>🪵</span> Wood & Print Partners (Detalles para alumnos)
       </a>
     </div>
     <p style="margin-top:0.4rem; font-size:0.75rem; color:var(--text-light);">
