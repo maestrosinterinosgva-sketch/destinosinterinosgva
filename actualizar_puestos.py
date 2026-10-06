@@ -56,12 +56,20 @@ def update_zip_package(output_zip="destinos_web.zip"):
                 z.write(rel_path, rel_path)
     print(f"[OK] Paquete web para publicar actualizado: {output_zip} ({os.path.getsize(output_zip)/1024/1024:.2f} MB)")
 
-def main():
+def main(target_pdf_arg=None):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)
 
     target_pdf = None
-    if len(sys.argv) > 1:
+    if target_pdf_arg:
+        target_pdf = target_pdf_arg.strip().strip('"').strip("'")
+        if target_pdf.startswith("http://") or target_pdf.startswith("https://"):
+            try:
+                target_pdf = download_pdf_if_url(target_pdf)
+            except Exception as e:
+                print(f"[-] Error al descargar el PDF desde la URL: {e}")
+                return
+    elif len(sys.argv) > 1:
         target_pdf = sys.argv[1].strip().strip('"').strip("'")
         if target_pdf.startswith("http://") or target_pdf.startswith("https://"):
             try:
