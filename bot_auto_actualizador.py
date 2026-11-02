@@ -29,9 +29,19 @@ SOURCES_TO_CHECK = [
     },
     {
         "name": "Convocatòria i Petició Telemàtica (Valencià)",
-        "url": "https://ceice.gva.es/ca/web/rrhh-educacion/convocatoria-y-peticion-telematica",
+        "url": "https://ceice.gva.es/va/web/rrhh-educacion/convocatoria-y-peticion-telematica",
         "patterns": [
             r'href="([^"]*pue_prov[^"]*\.pdf)"',
+            r'href="([^"]*pue_def[^"]*\.pdf)"',
+            r'href="([^"]*llocs_oferits[^"]*\.pdf)"'
+        ]
+    },
+    {
+        "name": "Portal Adjudicaciones Continuas GVA",
+        "url": "https://ceice.gva.es/es/web/rrhh-educacion/adjudicaciones-continuas",
+        "patterns": [
+            r'href="([^"]*pue_prov[^"]*\.pdf)"',
+            r'href="([^"]*pue_def[^"]*\.pdf)"',
             r'href="([^"]*llocs_oferits[^"]*\.pdf)"'
         ]
     }
