@@ -5171,14 +5171,14 @@
     "comarca": "LA HOYA DE BUÑOL",
     "lat": 39.480394,
     "lng": -0.645962,
-    "lloc": "216502",
+    "lloc": "883348",
     "horas": "Completa",
     "horas_num": 25.0,
     "es_completa": true,
     "req_ling": "",
     "itinerante": "NO",
     "observaciones": "",
-    "tipo": "SUSTITUCIÓN DETERMINADA",
+    "tipo": "SUSTITUCIÓN INDETERMINADA",
     "centros_compartidos": []
   },
   {
@@ -5199,14 +5199,14 @@
     "comarca": "LA HOYA DE BUÑOL",
     "lat": 39.480394,
     "lng": -0.645962,
-    "lloc": "883348",
+    "lloc": "216502",
     "horas": "Completa",
     "horas_num": 25.0,
     "es_completa": true,
     "req_ling": "",
     "itinerante": "NO",
     "observaciones": "",
-    "tipo": "SUSTITUCIÓN INDETERMINADA",
+    "tipo": "SUSTITUCIÓN DETERMINADA",
     "centros_compartidos": []
   },
   {
@@ -5719,34 +5719,6 @@
     "especialidad_completa": "277 - ÁMBITO SOCIOLINGÜÍSTICO",
     "codigo_especialidad": "277",
     "especialidad": "ÁMBITO SOCIOLINGÜÍSTICO",
-    "provincia": "València",
-    "localidad": "ALZIRA",
-    "codigo_centro": "46000705",
-    "nombre_centro": "IES REI EN JAUME",
-    "jornada": "SECUNDARIA",
-    "jornada_desc": "Horario IES / Secundaria",
-    "jornada_corta": "Horario IES",
-    "direccion": "CARRETERA DE GANDIA S/N",
-    "cp": "46600",
-    "comarca": "LA RIBERA ALTA",
-    "lat": 39.146907,
-    "lng": -0.430059,
-    "lloc": "914344",
-    "horas": "Completa",
-    "horas_num": 25.0,
-    "es_completa": true,
-    "req_ling": "FRA-B2.",
-    "itinerante": "NO",
-    "observaciones": "",
-    "tipo": "VACANTE",
-    "centros_compartidos": []
-  },
-  {
-    "numero": 202,
-    "cuerpo": "PROFESORES DE ENSEÑANZA SECUNDARIA",
-    "especialidad_completa": "277 - ÁMBITO SOCIOLINGÜÍSTICO",
-    "codigo_especialidad": "277",
-    "especialidad": "ÁMBITO SOCIOLINGÜÍSTICO",
     "provincia": "Castelló",
     "localidad": "CASTELLÓ DE LA PLANA",
     "codigo_centro": "12003857",
@@ -5780,7 +5752,7 @@
     ]
   },
   {
-    "numero": 203,
+    "numero": 202,
     "cuerpo": "PROFESORES DE MÚSICA Y ARTES ESCÉNICAS",
     "especialidad_completa": "6A7 - FAGOT",
     "codigo_especialidad": "6A7",
@@ -5808,7 +5780,7 @@
     "centros_compartidos": []
   },
   {
-    "numero": 204,
+    "numero": 203,
     "cuerpo": "PROFESORES DE MÚSICA Y ARTES ESCÉNICAS",
     "especialidad_completa": "6B0 - FLAUTA DE PICO",
     "codigo_especialidad": "6B0",
@@ -5836,7 +5808,7 @@
     "centros_compartidos": []
   },
   {
-    "numero": 205,
+    "numero": 204,
     "cuerpo": "PROFESORES DE MÚSICA Y ARTES ESCÉNICAS",
     "especialidad_completa": "6C2 - PIANO",
     "codigo_especialidad": "6C2",
@@ -5864,7 +5836,7 @@
     "centros_compartidos": []
   },
   {
-    "numero": 206,
+    "numero": 205,
     "cuerpo": "PROFESORES DE MÚSICA Y ARTES ESCÉNICAS",
     "especialidad_completa": "6C3 - SAXOFÓN",
     "codigo_especialidad": "6C3",
@@ -5892,7 +5864,7 @@
     "centros_compartidos": []
   },
   {
-    "numero": 207,
+    "numero": 206,
     "cuerpo": "PROFESORES DE MÚSICA Y ARTES ESCÉNICAS",
     "especialidad_completa": "6D1 - VIOLÍN",
     "codigo_especialidad": "6D1",
@@ -5920,7 +5892,7 @@
     "centros_compartidos": []
   },
   {
-    "numero": 208,
+    "numero": 207,
     "cuerpo": "PROFESORES DE MÚSICA Y ARTES ESCÉNICAS",
     "especialidad_completa": "6D1 - VIOLÍN",
     "codigo_especialidad": "6D1",
@@ -5948,7 +5920,7 @@
     "centros_compartidos": []
   },
   {
-    "numero": 209,
+    "numero": 208,
     "cuerpo": "PROFESORES DE MÚSICA Y ARTES ESCÉNICAS",
     "especialidad_completa": "6D1 - VIOLÍN",
     "codigo_especialidad": "6D1",
@@ -5995,7 +5967,7 @@
     ]
   },
   {
-    "numero": 210,
+    "numero": 209,
     "cuerpo": "PROFESORES DE ESCUELA OFICIAL DE IDIOMAS",
     "especialidad_completa": "411 - INGLÉS",
     "codigo_especialidad": "411",
@@ -6023,7 +5995,7 @@
     "centros_compartidos": []
   },
   {
-    "numero": 211,
+    "numero": 210,
     "cuerpo": "PROFESORES DE ESCUELA OFICIAL DE IDIOMAS",
     "especialidad_completa": "418 - VALENCIANO",
     "codigo_especialidad": "418",
