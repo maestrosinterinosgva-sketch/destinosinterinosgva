@@ -1907,6 +1907,133 @@ body {
   border-color: var(--slate-300);
 }
 
+/* ===================================================
+   WOOD & PRINT PARTNERS (BANNER MINIMALISTA COLABORADOR)
+   =================================================== */
+.wood-promo-mini {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fffdfa;
+  border: 1px solid #f2e8d9;
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin: 12px 0 16px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  font-size: 0.825rem;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .wood-promo-mini {
+  background: #1c1917;
+  border-color: #44403c;
+  box-shadow: none;
+}
+
+.wood-mini-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: #44403c;
+}
+
+[data-theme="dark"] .wood-mini-content {
+  color: #e7e5e4;
+}
+
+.wood-mini-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .wood-mini-badge {
+  background: #78350f;
+  color: #fef3c7;
+  border-color: #92400e;
+}
+
+.wood-mini-text {
+  color: #57534e;
+  font-size: 0.82rem;
+}
+
+.wood-mini-text strong {
+  color: #1c1917;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .wood-mini-text {
+  color: #a8a29e;
+}
+
+[data-theme="dark"] .wood-mini-text strong {
+  color: #fafaf9;
+}
+
+.wood-mini-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1c1917;
+  color: #ffffff !important;
+  padding: 5px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.775rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.wood-mini-btn svg {
+  flex-shrink: 0;
+}
+
+.wood-mini-btn:hover {
+  background: #d97706;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .wood-mini-btn {
+  background: #292524;
+  border: 1px solid #57534e;
+  color: #f5f5f4 !important;
+}
+
+[data-theme="dark"] .wood-mini-btn:hover {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff !important;
+}
+
+@media (max-width: 768px) {
+  .wood-promo-mini {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .wood-mini-btn {
+    align-self: flex-start;
+  }
+}
+
 .wood-promo-card {
   background: #ffffff;
   border: 1px solid var(--border);
@@ -1916,7 +2043,134 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-[data-theme="dark"] .wood-promo-card {
+[data-theme="dark"] /* ===================================================
+   WOOD & PRINT PARTNERS (BANNER MINIMALISTA COLABORADOR)
+   =================================================== */
+.wood-promo-mini {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fffdfa;
+  border: 1px solid #f2e8d9;
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin: 12px 0 16px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  font-size: 0.825rem;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .wood-promo-mini {
+  background: #1c1917;
+  border-color: #44403c;
+  box-shadow: none;
+}
+
+.wood-mini-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: #44403c;
+}
+
+[data-theme="dark"] .wood-mini-content {
+  color: #e7e5e4;
+}
+
+.wood-mini-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .wood-mini-badge {
+  background: #78350f;
+  color: #fef3c7;
+  border-color: #92400e;
+}
+
+.wood-mini-text {
+  color: #57534e;
+  font-size: 0.82rem;
+}
+
+.wood-mini-text strong {
+  color: #1c1917;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .wood-mini-text {
+  color: #a8a29e;
+}
+
+[data-theme="dark"] .wood-mini-text strong {
+  color: #fafaf9;
+}
+
+.wood-mini-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1c1917;
+  color: #ffffff !important;
+  padding: 5px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.775rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.wood-mini-btn svg {
+  flex-shrink: 0;
+}
+
+.wood-mini-btn:hover {
+  background: #d97706;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .wood-mini-btn {
+  background: #292524;
+  border: 1px solid #57534e;
+  color: #f5f5f4 !important;
+}
+
+[data-theme="dark"] .wood-mini-btn:hover {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff !important;
+}
+
+@media (max-width: 768px) {
+  .wood-promo-mini {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .wood-mini-btn {
+    align-self: flex-start;
+  }
+}
+
+.wood-promo-card {
   background: var(--bg-card);
   border-color: var(--border);
   box-shadow: none;
